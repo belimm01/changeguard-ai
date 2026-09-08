@@ -1,7 +1,7 @@
 import pytest
 
-from changeguard.findings import RiskFinding, RiskLevel
-from changeguard.models import ChangedFile, ChangeSet, ChangeType
+from changeguard.domain.findings import RiskFinding, RiskLevel
+from changeguard.domain.models import ChangedFile, ChangeSet, ChangeType
 from changeguard.rules.python_dependencies import detect_python_dependency_changes
 
 

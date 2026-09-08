@@ -4,7 +4,7 @@ from typing import Annotated
 
 from pydantic import BaseModel, ConfigDict, Field, TypeAdapter
 
-from changeguard.models import ChangedFile, ChangeSet, ChangeType
+from changeguard.domain.models import ChangedFile, ChangeSet, ChangeType
 
 
 class GitHubChangedFile(BaseModel):

@@ -2,8 +2,8 @@
 
 from pathlib import PurePosixPath
 
-from changeguard.findings import RiskFinding, RiskLevel
-from changeguard.models import ChangeSet
+from changeguard.domain.findings import RiskFinding, RiskLevel
+from changeguard.domain.models import ChangeSet
 
 PYTHON_DEPENDENCY_FILENAMES = frozenset(
     {

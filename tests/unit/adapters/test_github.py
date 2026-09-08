@@ -4,7 +4,7 @@ import pytest
 from pydantic import ValidationError
 
 from changeguard.adapters.github import GitHubChangedFile, parse_github_changed_files
-from changeguard.models import ChangedFile, ChangeSet, ChangeType
+from changeguard.domain.models import ChangedFile, ChangeSet, ChangeType
 
 
 def github_file(

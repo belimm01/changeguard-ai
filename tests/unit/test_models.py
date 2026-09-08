@@ -2,7 +2,7 @@ from dataclasses import FrozenInstanceError
 
 import pytest
 
-from changeguard.models import ChangedFile, ChangeSet, ChangeType
+from changeguard.domain.models import ChangedFile, ChangeSet, ChangeType
 
 
 def test_change_type_has_stable_string_values() -> None:
