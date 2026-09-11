@@ -1,0 +1,336 @@
+{
+  "scope": "ChangeGuard AI v1",
+  "baseline_commit": "4c23471",
+  "tickets": [
+    {
+      "id": "CG-001",
+      "title": "Model and validate pull-request changes",
+      "status": "Done",
+      "depends_on": [],
+      "milestone": "Foundation",
+      "path": "tickets/2026-09-06-CG-001.md"
+    },
+    {
+      "id": "CG-002",
+      "title": "Detect Python dependency changes",
+      "status": "Done",
+      "depends_on": [
+        "CG-001"
+      ],
+      "milestone": "Foundation",
+      "path": "tickets/2026-09-06-CG-002.md"
+    },
+    {
+      "id": "CG-003",
+      "title": "Validate and translate GitHub changed-file payloads",
+      "status": "Done",
+      "depends_on": [
+        "CG-001"
+      ],
+      "milestone": "Foundation",
+      "path": "tickets/2026-09-06-CG-003.md"
+    },
+    {
+      "id": "CG-004",
+      "title": "Orchestrate deterministic analysis rules",
+      "status": "Done",
+      "depends_on": [
+        "CG-002",
+        "CG-003"
+      ],
+      "milestone": "Foundation",
+      "path": "tickets/2026-09-08-CG-004.md"
+    },
+    {
+      "id": "CG-005",
+      "title": "Serialize deterministic analysis findings",
+      "status": "Done",
+      "depends_on": [
+        "CG-004"
+      ],
+      "milestone": "Foundation",
+      "path": "tickets/2026-09-09-CG-005.md"
+    },
+    {
+      "id": "CG-006",
+      "title": "Local JSON analysis CLI",
+      "status": "In progress",
+      "depends_on": [
+        "CG-005"
+      ],
+      "milestone": "Local vertical slice",
+      "path": "tickets/2026-09-10-CG-006.md"
+    },
+    {
+      "id": "CG-007",
+      "title": "v1 boundaries and threat model",
+      "status": "Planned",
+      "depends_on": [
+        "CG-006"
+      ],
+      "milestone": "Evidence-backed analysis",
+      "path": "tickets/2026-09-10-CG-007.md"
+    },
+    {
+      "id": "CG-008",
+      "title": "Versioned reports, evidence and coverage",
+      "status": "Planned",
+      "depends_on": [
+        "CG-007"
+      ],
+      "milestone": "Evidence-backed analysis",
+      "path": "tickets/2026-09-10-CG-008.md"
+    },
+    {
+      "id": "CG-009",
+      "title": "Bounded asynchronous GitHub PR reader",
+      "status": "Planned",
+      "depends_on": [
+        "CG-008"
+      ],
+      "milestone": "Evidence-backed analysis",
+      "path": "tickets/2026-09-10-CG-009.md"
+    },
+    {
+      "id": "CG-010",
+      "title": "Safe SHA-bound content and diff evidence",
+      "status": "Planned",
+      "depends_on": [
+        "CG-009"
+      ],
+      "milestone": "Evidence-backed analysis",
+      "path": "tickets/2026-09-10-CG-010.md"
+    },
+    {
+      "id": "CG-011",
+      "title": "Scoped OpenAPI compatibility rule",
+      "status": "Planned",
+      "depends_on": [
+        "CG-010"
+      ],
+      "milestone": "Evidence-backed analysis",
+      "path": "tickets/2026-09-10-CG-011.md"
+    },
+    {
+      "id": "CG-012",
+      "title": "Scoped Avro compatibility rule",
+      "status": "Planned",
+      "depends_on": [
+        "CG-010"
+      ],
+      "milestone": "Evidence-backed analysis",
+      "path": "tickets/2026-09-10-CG-012.md"
+    },
+    {
+      "id": "CG-013",
+      "title": "Scoped Kubernetes manifest risk rule",
+      "status": "Planned",
+      "depends_on": [
+        "CG-010"
+      ],
+      "milestone": "Evidence-backed analysis",
+      "path": "tickets/2026-09-10-CG-013.md"
+    },
+    {
+      "id": "CG-014",
+      "title": "Authenticated analysis HTTP endpoint",
+      "status": "Planned",
+      "depends_on": [
+        "CG-008",
+        "CG-009",
+        "CG-010",
+        "CG-011",
+        "CG-012",
+        "CG-013"
+      ],
+      "milestone": "Evidence-backed analysis",
+      "path": "tickets/2026-09-10-CG-014.md"
+    },
+    {
+      "id": "CG-015",
+      "title": "Persistent analysis jobs and reports",
+      "status": "Planned",
+      "depends_on": [
+        "CG-014"
+      ],
+      "milestone": "Evidence-backed analysis",
+      "path": "tickets/2026-09-10-CG-015.md"
+    },
+    {
+      "id": "CG-016",
+      "title": "Bounded repository context corpus",
+      "status": "Planned",
+      "depends_on": [
+        "CG-010"
+      ],
+      "milestone": "Grounded AI",
+      "path": "tickets/2026-09-10-CG-016.md"
+    },
+    {
+      "id": "CG-017",
+      "title": "Deterministic context retrieval",
+      "status": "Planned",
+      "depends_on": [
+        "CG-016"
+      ],
+      "milestone": "Grounded AI",
+      "path": "tickets/2026-09-10-CG-017.md"
+    },
+    {
+      "id": "CG-018",
+      "title": "Optional structured LLM adapter",
+      "status": "Planned",
+      "depends_on": [
+        "CG-008"
+      ],
+      "milestone": "Grounded AI",
+      "path": "tickets/2026-09-10-CG-018.md"
+    },
+    {
+      "id": "CG-019",
+      "title": "Citation and evidence validation",
+      "status": "Planned",
+      "depends_on": [
+        "CG-008",
+        "CG-010",
+        "CG-018"
+      ],
+      "milestone": "Grounded AI",
+      "path": "tickets/2026-09-10-CG-019.md"
+    },
+    {
+      "id": "CG-020",
+      "title": "Optional advisory AI enrichment",
+      "status": "Planned",
+      "depends_on": [
+        "CG-014",
+        "CG-017",
+        "CG-018",
+        "CG-019"
+      ],
+      "milestone": "Grounded AI",
+      "path": "tickets/2026-09-10-CG-020.md"
+    },
+    {
+      "id": "CG-021",
+      "title": "Reproducible offline evaluation",
+      "status": "Planned",
+      "depends_on": [
+        "CG-011",
+        "CG-012",
+        "CG-013",
+        "CG-020"
+      ],
+      "milestone": "Grounded AI",
+      "path": "tickets/2026-09-10-CG-021.md"
+    },
+    {
+      "id": "CG-022",
+      "title": "Adversarial and data-leakage regressions",
+      "status": "Planned",
+      "depends_on": [
+        "CG-020",
+        "CG-021"
+      ],
+      "milestone": "Grounded AI",
+      "path": "tickets/2026-09-10-CG-022.md"
+    },
+    {
+      "id": "CG-023",
+      "title": "GitHub App authentication and authorization",
+      "status": "Planned",
+      "depends_on": [
+        "CG-009",
+        "CG-014"
+      ],
+      "milestone": "GitHub delivery",
+      "path": "tickets/2026-09-10-CG-023.md"
+    },
+    {
+      "id": "CG-024",
+      "title": "Verified webhook and durable inbox",
+      "status": "Planned",
+      "depends_on": [
+        "CG-015",
+        "CG-023"
+      ],
+      "milestone": "GitHub delivery",
+      "path": "tickets/2026-09-10-CG-024.md"
+    },
+    {
+      "id": "CG-025",
+      "title": "Durable worker and crash recovery",
+      "status": "Planned",
+      "depends_on": [
+        "CG-015",
+        "CG-020",
+        "CG-024"
+      ],
+      "milestone": "GitHub delivery",
+      "path": "tickets/2026-09-10-CG-025.md"
+    },
+    {
+      "id": "CG-026",
+      "title": "Idempotent advisory GitHub Checks",
+      "status": "Planned",
+      "depends_on": [
+        "CG-023",
+        "CG-025"
+      ],
+      "milestone": "GitHub delivery",
+      "path": "tickets/2026-09-10-CG-026.md"
+    },
+    {
+      "id": "CG-027",
+      "title": "Privacy-safe telemetry and health",
+      "status": "Planned",
+      "depends_on": [
+        "CG-025",
+        "CG-026"
+      ],
+      "milestone": "Release",
+      "path": "tickets/2026-09-10-CG-027.md"
+    },
+    {
+      "id": "CG-028",
+      "title": "Container deployment and recovery runbook",
+      "status": "Planned",
+      "depends_on": [
+        "CG-022",
+        "CG-027"
+      ],
+      "milestone": "Release",
+      "path": "tickets/2026-09-10-CG-028.md"
+    },
+    {
+      "id": "CG-029",
+      "title": "CI quality, security and evaluation gates",
+      "status": "Planned",
+      "depends_on": [
+        "CG-021",
+        "CG-022",
+        "CG-028"
+      ],
+      "milestone": "Release",
+      "path": "tickets/2026-09-10-CG-029.md"
+    },
+    {
+      "id": "CG-030",
+      "title": "v1 acceptance, sandbox demo and handoff",
+      "status": "Planned",
+      "depends_on": [
+        "CG-011",
+        "CG-012",
+        "CG-013",
+        "CG-021",
+        "CG-022",
+        "CG-026",
+        "CG-027",
+        "CG-028",
+        "CG-029"
+      ],
+      "milestone": "Release",
+      "path": "tickets/2026-09-10-CG-030.md"
+    }
+  ]
+}

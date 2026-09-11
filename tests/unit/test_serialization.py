@@ -91,3 +91,5 @@ def test_maps_one_finding_to_a_frozen_dto() -> None:
 
     assert isinstance(dto, FindingDto)
     assert dto.level == "high"
+
+
