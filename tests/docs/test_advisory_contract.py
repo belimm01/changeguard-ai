@@ -35,6 +35,13 @@ def test_contract_docs_name_untrusted_inputs_and_coverage() -> None:
         "future llm/tool output",
     ):
         assert input_name in text
+    for trusted_name in (
+        "service configuration",
+        "pinned application code",
+        "injected credentials",
+        "operator-controlled deployment settings",
+    ):
+        assert trusted_name in text
     assert "partial" in text
     assert "unsupported" in text
     assert "never `safe`" in text

@@ -64,7 +64,7 @@
     {
       "id": "CG-007",
       "title": "v1 boundaries and threat model",
-      "status": "Planned",
+      "status": "Done",
       "depends_on": [
         "CG-006"
       ],
