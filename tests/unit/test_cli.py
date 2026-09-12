@@ -54,3 +54,23 @@ def test_help_exits_zero() -> None:
     with pytest.raises(SystemExit) as exc:
         main(argv=["--help"], stdin=stdin, stdout=sink, stderr=stderr)
     assert exc.value.code == 0
+
+
+def test_invalid_payload_never_echoes_secret() -> None:
+    sink = io.StringIO()
+    stderr = io.StringIO()
+    SECRET = "SUPER-SECRET-TOKEN-123"
+    payload = [
+        {
+            "filename": "app.py",
+            "status": "modified",
+            "additions": SECRET,
+            "deletions": 0,
+            "patch": None,
+        }
+    ]
+    stdin = io.StringIO(json.dumps(payload))
+    rc = main(argv=[], stdin=stdin, stdout=sink, stderr=stderr)
+    assert rc == 2
+    assert sink.getvalue() == ""
+    assert SECRET not in stderr.getvalue()
