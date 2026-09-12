@@ -1,6 +1,6 @@
 # ChangeGuard AI — v1 roadmap and ticket board
 
-Updated: 2026-09-10
+Updated: 2026-09-12
 
 ## Start here
 
@@ -8,10 +8,10 @@ Open this file to see the entire project. Each row links to an implementation
 ticket; `backlog.json` is the machine-readable copy of this board.
 
 Current task: **CG-006 — local JSON analysis CLI**.
-Accepted baseline: `4c23471` on `feature/cg-004-rule-orchestration`.
-CG-001–CG-005 are accepted; CG-006 has local implementation work but has not
-been reviewed or accepted. Baseline verification: 67 tests plus Ruff, strict
-mypy and lock checks passed before the new CLI work.
+Current code checkpoint: `277f69c` on `main`, merged and pushed.
+CG-001–CG-005 are accepted; CG-006 code is merged, but its ticket-specific
+unit/subprocess test acceptance remains incomplete. Pre-merge review approved;
+70 tests plus Ruff, strict mypy and lock checks passed locally.
 
 This is a proposed finite v1 backlog, not a claim that all future requirements
 are known. CG-007 makes the release boundary explicit. Later tickets are
