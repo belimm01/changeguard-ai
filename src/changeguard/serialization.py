@@ -6,22 +6,6 @@ from changeguard.dto.findings import FindingDto
 from changeguard.dto.reports import CoverageDto, EvidenceDto
 
 
-def serialize_evidence(
-    evidences: tuple[Evidence, ...],
-) -> tuple[dict[str, object], ...]:
-    return tuple(
-        evidence_to_dto(evidence).model_dump(mode="json") for evidence in evidences
-    )
-
-
-def serialize_coverage(
-    coverages: tuple[Coverage, ...],
-) -> tuple[dict[str, object], ...]:
-    return tuple(
-        coverage_to_dto(coverage).model_dump(mode="json") for coverage in coverages
-    )
-
-
 def serialize_findings(
     findings: tuple[RiskFinding, ...],
 ) -> tuple[dict[str, object], ...]:
