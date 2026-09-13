@@ -331,6 +331,62 @@
       ],
       "milestone": "Release",
       "path": "tickets/2026-09-10-CG-030.md"
+    },
+    {
+      "id": "CG-031",
+      "title": "Optional embeddings-based semantic retrieval",
+      "status": "Planned",
+      "depends_on": [
+        "CG-016",
+        "CG-017",
+        "CG-020"
+      ],
+      "milestone": "AI Engineer extensions",
+      "path": "tickets/2026-09-13-CG-031.md"
+    },
+    {
+      "id": "CG-032",
+      "title": "LLM observability and cost accounting",
+      "status": "Planned",
+      "depends_on": [
+        "CG-020",
+        "CG-027"
+      ],
+      "milestone": "AI Engineer extensions",
+      "path": "tickets/2026-09-13-CG-032.md"
+    },
+    {
+      "id": "CG-033",
+      "title": "Resilient provider calls: retries, backoff and optional cache",
+      "status": "Planned",
+      "depends_on": [
+        "CG-018"
+      ],
+      "milestone": "AI Engineer extensions",
+      "path": "tickets/2026-09-13-CG-033.md"
+    },
+    {
+      "id": "CG-034",
+      "title": "Streaming advisory output over SSE",
+      "status": "Planned",
+      "depends_on": [
+        "CG-014",
+        "CG-020"
+      ],
+      "milestone": "AI Engineer extensions",
+      "path": "tickets/2026-09-13-CG-034.md"
+    },
+    {
+      "id": "CG-035",
+      "title": "LLM guardrails: redaction and prompt-injection defense",
+      "status": "Planned",
+      "depends_on": [
+        "CG-018",
+        "CG-019",
+        "CG-022"
+      ],
+      "milestone": "AI Engineer extensions",
+      "path": "tickets/2026-09-13-CG-035.md"
     }
   ]
 }

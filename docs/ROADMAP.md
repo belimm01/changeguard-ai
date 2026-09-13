@@ -1,6 +1,6 @@
 # ChangeGuard AI — v1 roadmap and ticket board
 
-Updated: 2026-09-12
+Updated: 2026-09-13
 
 ## Start here
 
@@ -49,8 +49,10 @@ release deterministic-only rather than claiming the AI integration is verified.
 - Autonomous edits, execution of repository code, merge approval or merge blocking.
 - An exhaustive compatibility/security scanner or a guarantee of no defects.
 - SaaS billing, a web UI, enterprise multi-tenancy and arbitrary Git providers.
-- Kubernetes hosting, vector database, embeddings, agent framework or MCP merely
-  to accumulate technologies. Lexical retrieval is the initial baseline.
+- Kubernetes hosting, agent framework, MCP or autonomous edits merely to
+  accumulate technologies. Lexical retrieval is the v1 baseline. Embeddings and
+  a single-host vector store are deferred to the opt-in post-v1 extensions
+  (CG-031+), not v1 requirements; external managed vector databases stay out.
 - Public deployment, spending on model calls or GitHub writes without explicit
   authorization at the relevant execution step.
 
@@ -95,6 +97,11 @@ reviewed stacked dependency is recorded.
 | [CG-028](tickets/2026-09-10-CG-028.md) | Container deployment and recovery runbook | Planned | CG-022, CG-027 | Release |
 | [CG-029](tickets/2026-09-10-CG-029.md) | CI quality, security and evaluation gates | Planned | CG-021, CG-022, CG-028 | Release |
 | [CG-030](tickets/2026-09-10-CG-030.md) | v1 acceptance, sandbox demo and handoff | Planned | CG-011, CG-012, CG-013, CG-021, CG-022, CG-026, CG-027, CG-028, CG-029 | Release |
+| [CG-031](tickets/2026-09-13-CG-031.md) | Optional embeddings-based semantic retrieval | Planned | CG-016, CG-017, CG-020 | AI Engineer extensions |
+| [CG-032](tickets/2026-09-13-CG-032.md) | LLM observability and cost accounting | Planned | CG-020, CG-027 | AI Engineer extensions |
+| [CG-033](tickets/2026-09-13-CG-033.md) | Resilient provider calls: retries, backoff, cache | Planned | CG-018 | AI Engineer extensions |
+| [CG-034](tickets/2026-09-13-CG-034.md) | Streaming advisory output over SSE | Planned | CG-014, CG-020 | AI Engineer extensions |
+| [CG-035](tickets/2026-09-13-CG-035.md) | LLM guardrails: redaction and prompt-injection defense | Planned | CG-018, CG-019, CG-022 | AI Engineer extensions |
 
 ## Milestone exit criteria
 
@@ -107,6 +114,10 @@ reviewed stacked dependency is recorded.
    and revision-correct advisory Checks under duplicate/racing deliveries.
 5. Release — CG-027–CG-030: observable deployment, tested recovery, green CI
    and a real approved sandbox run. No release-complete claim without this proof.
+6. AI Engineer extensions (post-v1, opt-in) — CG-031–CG-035: job-relevant depth
+   (semantic RAG, LLM observability/cost, provider resilience, streaming,
+   guardrails). These require accepted v1 prerequisites, add no v1 obligations,
+   and stay single-host with no external managed vector DB or agent framework.
 
 Dependencies, not table position, determine what can run in parallel. For
 example corpus/retrieval and authentication can proceed once their prerequisites
