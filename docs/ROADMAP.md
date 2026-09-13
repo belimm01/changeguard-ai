@@ -7,11 +7,11 @@ Updated: 2026-09-12
 Open this file to see the entire project. Each row links to an implementation
 ticket; `backlog.json` is the machine-readable copy of this board.
 
-Current task: **CG-006 — local JSON analysis CLI**.
-Current code checkpoint: `277f69c` on `main`, merged and pushed.
-CG-001–CG-005 are accepted; CG-006 code is merged, but its ticket-specific
-unit/subprocess test acceptance remains incomplete. Pre-merge review approved;
-70 tests plus Ruff, strict mypy and lock checks passed locally.
+Current task: **CG-008 — versioned analysis report, evidence and coverage**.
+Current code checkpoint: `62f691c` on `main`, merged and pushed.
+CG-001–CG-007 are accepted; CG-006 was accepted this session (CLI unit +
+subprocess tests, verified behavior in README, independent review clean).
+81 tests plus Ruff, strict mypy and lock checks passed locally.
 
 This is a proposed finite v1 backlog, not a claim that all future requirements
 are known. CG-007 makes the release boundary explicit. Later tickets are
@@ -67,7 +67,7 @@ reviewed stacked dependency is recorded.
 | [CG-003](tickets/2026-09-06-CG-003.md) | Validate and translate GitHub changed-file payloads | Done | CG-001 | Foundation |
 | [CG-004](tickets/2026-09-08-CG-004.md) | Orchestrate deterministic analysis rules | Done | CG-002, CG-003 | Foundation |
 | [CG-005](tickets/2026-09-09-CG-005.md) | Serialize deterministic analysis findings | Done | CG-004 | Foundation |
-| [CG-006](tickets/2026-09-10-CG-006.md) | Local JSON analysis CLI | In progress | CG-005 | Local vertical slice |
+| [CG-006](tickets/2026-09-10-CG-006.md) | Local JSON analysis CLI | Done | CG-005 | Local vertical slice |
 | [CG-007](tickets/2026-09-10-CG-007.md) | v1 boundaries and threat model | Done | CG-006 | Evidence-backed analysis |
 | [CG-008](tickets/2026-09-10-CG-008.md) | Versioned reports, evidence and coverage | Planned | CG-007 | Evidence-backed analysis |
 | [CG-009](tickets/2026-09-10-CG-009.md) | Bounded asynchronous GitHub PR reader | Planned | CG-008 | Evidence-backed analysis |

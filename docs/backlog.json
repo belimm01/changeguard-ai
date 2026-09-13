@@ -54,7 +54,7 @@
     {
       "id": "CG-006",
       "title": "Local JSON analysis CLI",
-      "status": "In progress",
+      "status": "Done",
       "depends_on": [
         "CG-005"
       ],
