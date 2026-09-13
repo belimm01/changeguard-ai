@@ -98,3 +98,13 @@ def test_rule_error_is_not_swallowed(monkeypatch: pytest.MonkeyPatch) -> None:
             argv=[], stdin=io.StringIO(json.dumps(payload)), stdout=sink, stderr=stderr
         )
     assert exc.value.args[0] == "boom"
+
+
+def test_non_list_json_root_is_rejected() -> None:
+    stdin = io.StringIO("{}")
+    sink = io.StringIO()
+    stderr = io.StringIO()
+    rc = main(argv=[], stdin=stdin, stdout=sink, stderr=stderr)
+    assert rc == 2
+    assert sink.getvalue() == ""
+    assert stderr.getvalue() == "invalid input\n"
