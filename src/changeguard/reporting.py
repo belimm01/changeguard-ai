@@ -20,7 +20,7 @@ def serialize_report(report: AnalysisReport) -> dict[str, object]:
         findings=[finding_to_dto(finding) for finding in report.findings],
         evidence=[evidence_to_dto(evidence) for evidence in report.evidence],
         coverage=[coverage_to_dto(coverage) for coverage in report.coverage],
-        status=report.status,
+        status=derive_status(report.coverage),
         analysis_version=report.analysis_version,
         repository=report.repository,
         pull_request=report.pull_request,

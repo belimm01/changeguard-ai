@@ -42,7 +42,7 @@ def test_reporting() -> None:
         head_sha="def456",
     )
     rs = serialize_report(report)
-    assert rs.get("status") == "complete"
+    assert rs.get("status") == "partial"
     assert rs.get("analysis_version") == "0.0.0"
     assert rs.get("repository") == "example/repo"
     assert rs.get("pull_request") == "123"
