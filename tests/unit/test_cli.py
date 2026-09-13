@@ -74,3 +74,27 @@ def test_invalid_payload_never_echoes_secret() -> None:
     assert rc == 2
     assert sink.getvalue() == ""
     assert SECRET not in stderr.getvalue()
+
+
+def test_rule_error_is_not_swallowed(monkeypatch: pytest.MonkeyPatch) -> None:
+    payload = [
+        {
+            "filename": "app.py",
+            "status": "modified",
+            "additions": 0,
+            "deletions": 0,
+            "patch": None,
+        }
+    ]
+
+    def boom(_change_set: object) -> object:
+        raise RuntimeError("boom")
+
+    monkeypatch.setattr("changeguard.cli.detect_python_dependency_changes", boom)
+    sink = io.StringIO()
+    stderr = io.StringIO()
+    with pytest.raises(RuntimeError) as exc:
+        main(
+            argv=[], stdin=io.StringIO(json.dumps(payload)), stdout=sink, stderr=stderr
+        )
+    assert exc.value.args[0] == "boom"
