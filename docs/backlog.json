@@ -74,7 +74,7 @@
     {
       "id": "CG-008",
       "title": "Versioned reports, evidence and coverage",
-      "status": "Planned",
+      "status": "In progress",
       "depends_on": [
         "CG-007"
       ],
