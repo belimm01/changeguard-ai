@@ -1,4 +1,9 @@
-from changeguard.domain.reports import AnalysisReport
+from changeguard.domain.reports import (
+    AnalysisReport,
+    Coverage,
+    CoverageState,
+    ReportStatus,
+)
 from changeguard.dto.reports import AnalysisReportDto
 from changeguard.serialization import (
     coverage_to_dto,
@@ -23,3 +28,13 @@ def serialize_report(report: AnalysisReport) -> dict[str, object]:
         head_sha=report.head_sha,
     )
     return dto.model_dump(mode="json")
+
+
+def derive_status(coverages: tuple[Coverage, ...]) -> ReportStatus:
+    result = ReportStatus.COMPLETE
+    for status in {coverage.state for coverage in coverages}:
+        if status is CoverageState.UNSUPPORTED:
+            return ReportStatus.UNSUPPORTED
+        elif status is CoverageState.PARTIAL:
+            result = ReportStatus.PARTIAL
+    return result

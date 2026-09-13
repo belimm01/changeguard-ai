@@ -6,7 +6,7 @@ from changeguard.domain.reports import (
     Evidence,
     ReportStatus,
 )
-from changeguard.reporting import serialize_report
+from changeguard.reporting import derive_status, serialize_report
 
 
 def test_reporting() -> None:
@@ -65,3 +65,81 @@ def test_reporting() -> None:
             "reason": "Example reason",
         }
     ]
+
+
+def test_derive_status() -> None:
+    assert (
+        derive_status(
+            (
+                Coverage(
+                    rule_id="example-rule",
+                    target="example.py",
+                    state=CoverageState.PARTIAL,
+                    reason="Example reason",
+                ),
+                Coverage(
+                    rule_id="example-rule",
+                    target="example.py",
+                    state=CoverageState.SUPPORTED,
+                    reason="Example reason",
+                ),
+                Coverage(
+                    rule_id="example-rule",
+                    target="example.py",
+                    state=CoverageState.UNSUPPORTED,
+                    reason="Example reason",
+                ),
+            )
+        )
+        is ReportStatus.UNSUPPORTED
+    )
+    assert (
+        derive_status(
+            (
+                Coverage(
+                    rule_id="example-rule",
+                    target="example.py",
+                    state=CoverageState.PARTIAL,
+                    reason="Example reason",
+                ),
+                Coverage(
+                    rule_id="example-rule",
+                    target="example.py",
+                    state=CoverageState.SUPPORTED,
+                    reason="Example reason",
+                ),
+                Coverage(
+                    rule_id="example-rule",
+                    target="example.py",
+                    state=CoverageState.SUPPORTED,
+                    reason="Example reason",
+                ),
+            )
+        )
+        is ReportStatus.PARTIAL
+    )
+    assert (
+        derive_status(
+            (
+                Coverage(
+                    rule_id="example-rule",
+                    target="example.py",
+                    state=CoverageState.SUPPORTED,
+                    reason="Example reason",
+                ),
+                Coverage(
+                    rule_id="example-rule",
+                    target="example.py",
+                    state=CoverageState.SUPPORTED,
+                    reason="Example reason",
+                ),
+                Coverage(
+                    rule_id="example-rule",
+                    target="example.py",
+                    state=CoverageState.SUPPORTED,
+                    reason="Example reason",
+                ),
+            )
+        )
+        is ReportStatus.COMPLETE
+    )
