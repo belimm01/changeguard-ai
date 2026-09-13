@@ -9,6 +9,32 @@ from changeguard.domain.reports import (
 from changeguard.reporting import derive_status, serialize_report
 
 
+def test_report_key_order() -> None:
+    report = AnalysisReport(
+        findings=(),
+        evidence=(),
+        coverage=(),
+        status=ReportStatus.COMPLETE,
+        analysis_version="0.0.0",
+        repository="example/repo",
+        pull_request="123",
+        base_sha="abc123",
+        head_sha="def456",
+    )
+    assert list(serialize_report(report).keys()) == [
+        "schema_version",
+        "analysis_version",
+        "repository",
+        "pull_request",
+        "base_sha",
+        "head_sha",
+        "status",
+        "findings",
+        "evidence",
+        "coverage",
+    ]
+
+
 def test_reporting() -> None:
     report = AnalysisReport(
         findings=(
