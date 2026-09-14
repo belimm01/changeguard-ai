@@ -1,6 +1,6 @@
 # ChangeGuard AI — v1 roadmap and ticket board
 
-Updated: 2026-09-13
+Updated: 2026-09-14
 
 ## Start here
 
@@ -37,8 +37,9 @@ unsupported inputs must not look like a clean bill of health.
 v1 includes scoped Python dependency, OpenAPI, Avro and Kubernetes checks;
 bounded ADR/documentation context retrieval; optional structured LLM output;
 citation validation and reproducible evaluations; authenticated HTTP and GitHub
-boundaries; persistence and crash recovery; telemetry; a reproducible single-host
-container deployment; CI and an observed sandbox end-to-end acceptance run.
+boundaries; PostgreSQL persistence via async SQLAlchemy and Alembic
+migrations; crash recovery; telemetry; a reproducible single-host container
+deployment; CI and an observed sandbox end-to-end acceptance run.
 A citation proves source provenance, not that an AI interpretation is true.
 Full AI-capable v1 acceptance also requires an approved live run of one concrete
 provider adapter. If that verification is blocked, label the demonstrated
@@ -49,10 +50,13 @@ release deterministic-only rather than claiming the AI integration is verified.
 - Autonomous edits, execution of repository code, merge approval or merge blocking.
 - An exhaustive compatibility/security scanner or a guarantee of no defects.
 - SaaS billing, a web UI, enterprise multi-tenancy and arbitrary Git providers.
-- Kubernetes hosting, agent framework, MCP or autonomous edits merely to
-  accumulate technologies. Lexical retrieval is the v1 baseline. Embeddings and
-  a single-host vector store are deferred to the opt-in post-v1 extensions
-  (CG-031+), not v1 requirements; external managed vector databases stay out.
+- Kubernetes hosting, agent framework, autonomous edits, or MCP merely to
+  accumulate technologies. A scoped read-only ChangeGuard MCP server is allowed
+  only as an opt-in post-core integration milestone with concrete report/evidence
+  workflows, client smoke evidence, and the same advisory/no-execution boundary.
+  Lexical retrieval is the v1 baseline. Embeddings and a single-host vector store
+  are deferred to the opt-in post-v1 extensions (CG-031+), not v1 requirements;
+  external managed vector databases stay out.
 - Public deployment, spending on model calls or GitHub writes without explicit
   authorization at the relevant execution step.
 
@@ -102,22 +106,25 @@ reviewed stacked dependency is recorded.
 | [CG-033](tickets/2026-09-13-CG-033.md) | Resilient provider calls: retries, backoff, cache | Planned | CG-018 | AI Engineer extensions |
 | [CG-034](tickets/2026-09-13-CG-034.md) | Streaming advisory output over SSE | Planned | CG-014, CG-020 | AI Engineer extensions |
 | [CG-035](tickets/2026-09-13-CG-035.md) | LLM guardrails: redaction and prompt-injection defense | Planned | CG-018, CG-019, CG-022 | AI Engineer extensions |
+| [CG-036](tickets/2026-09-14-CG-036.md) | Read-only MCP server for ChangeGuard reports and evidence | Planned | CG-015, CG-019, CG-027 | AI Engineer extensions |
 
 ## Milestone exit criteria
 
 1. Local vertical slice — CG-006: actual subprocess input/output and exit codes.
 2. Evidence-backed analysis — CG-007–CG-015: authenticated analysis of bounded
-   GitHub inputs with explicit coverage, scoped rules and durable reports.
+   GitHub inputs with explicit coverage, scoped rules and durable PostgreSQL
+   reports using async SQLAlchemy models and Alembic migrations.
 3. Grounded AI — CG-016–CG-022: optional evidence-validated advice, offline
    quality measurements and adversarial regression evidence, not a prompt demo.
 4. GitHub delivery — CG-023–CG-026: authorized signed events, durable retries
    and revision-correct advisory Checks under duplicate/racing deliveries.
 5. Release — CG-027–CG-030: observable deployment, tested recovery, green CI
    and a real approved sandbox run. No release-complete claim without this proof.
-6. AI Engineer extensions (post-v1, opt-in) — CG-031–CG-035: job-relevant depth
+6. AI Engineer extensions (post-v1, opt-in) — CG-031–CG-036: job-relevant depth
    (semantic RAG, LLM observability/cost, provider resilience, streaming,
-   guardrails). These require accepted v1 prerequisites, add no v1 obligations,
-   and stay single-host with no external managed vector DB or agent framework.
+   guardrails, read-only MCP integration for report/evidence consumption). These
+   require accepted v1 prerequisites, add no v1 obligations, and stay single-host
+   with no external managed vector DB or agent framework.
 
 Dependencies, not table position, determine what can run in parallel. For
 example corpus/retrieval and authentication can proceed once their prerequisites
@@ -155,8 +162,9 @@ git diff --check
 
 - GitHub is the first provider; one authorized sandbox installation is sufficient
   for v1, but installation/repository authorization must still be enforced.
-- HTTP, a durable worker and Postgres are sufficient; no broker is required if
-  database job claims, leases and transactional enqueue are correctly tested.
+- HTTP, a durable worker and PostgreSQL are sufficient; persistence uses async
+  SQLAlchemy and Alembic migrations. No broker is required if database job claims,
+  leases and transactional enqueue are correctly tested against a real database.
 - AI is optional and repository data leaves the service only with an explicit
   configured policy. Choose the provider/model and budget before live calls.
 - Single-host container deployment is the proposed first operational target;

@@ -387,6 +387,18 @@
       ],
       "milestone": "AI Engineer extensions",
       "path": "tickets/2026-09-13-CG-035.md"
+    },
+    {
+      "id": "CG-036",
+      "title": "Read-only MCP server for ChangeGuard reports and evidence",
+      "status": "Planned",
+      "depends_on": [
+        "CG-015",
+        "CG-019",
+        "CG-027"
+      ],
+      "milestone": "AI Engineer extensions",
+      "path": "tickets/2026-09-14-CG-036.md"
     }
   ]
 }
