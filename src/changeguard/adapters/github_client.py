@@ -12,6 +12,15 @@ from changeguard.domain.reports import Coverage, CoverageState
 _RETRYABLE_STATUS = frozenset({429, 500, 502, 503, 504})
 
 
+def _is_retryable(response: Response) -> bool:
+    if response.status_code in _RETRYABLE_STATUS:
+        return True
+    return (
+        response.status_code == 403
+        and response.headers.get("x-ratelimit-remaining") == "0"
+    )
+
+
 @dataclass(frozen=True, slots=True)
 class RemoteFilesResult:
     changeset: ChangeSet
@@ -109,7 +118,7 @@ class GitHubPullRequestReader:
                 rs.raise_for_status()
                 return rs
             except httpx.HTTPStatusError as e:
-                if e.response.status_code not in _RETRYABLE_STATUS:
+                if not _is_retryable(e.response):
                     raise
                 last_error = e
             except httpx.TimeoutException as e:
