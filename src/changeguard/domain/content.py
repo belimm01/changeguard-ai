@@ -27,3 +27,12 @@ class FileContentRef:
             raise ValueError("name cannot be empty or whitespace-only")
         if not self.sha.strip():
             raise ValueError("sha cannot be empty or whitespace-only")
+
+
+@dataclass(frozen=True, slots=True)
+class FileContent:
+    """A file's contents at a specific revision."""
+
+    sha: str
+    text: str
+    revision: Revision

@@ -4,7 +4,8 @@ import httpx
 import pytest
 from pydantic import SecretStr
 
-from changeguard.adapters.github_client import GitHubPullRequestReader
+from changeguard.adapters.github import GithubClient
+from changeguard.adapters.github_pull_request import GitHubPullRequestReader
 from changeguard.config import GitHubSettings
 from changeguard.domain.models import ChangeType
 from changeguard.domain.reports import CoverageState
@@ -56,7 +57,9 @@ def test_read_changed_files_with_pagination() -> None:
         )
 
     settings = GitHubSettings(token=SecretStr("ghp_test"))
-    client = httpx.AsyncClient(transport=httpx.MockTransport(handler))
+    client = GithubClient(
+        httpx.AsyncClient(transport=httpx.MockTransport(handler)), settings
+    )
     reader = GitHubPullRequestReader(client, settings)
 
     changed_files = asyncio.run(reader.read_changed_files("octo", "repo", 123))
@@ -117,7 +120,9 @@ def test_read_changed_files_with_pagination_returns_partial_state() -> None:
         )
 
     settings = GitHubSettings(token=SecretStr("ghp_test"), max_pages=1)
-    client = httpx.AsyncClient(transport=httpx.MockTransport(handler))
+    client = GithubClient(
+        httpx.AsyncClient(transport=httpx.MockTransport(handler)), settings
+    )
     reader = GitHubPullRequestReader(client, settings)
 
     changed_files = asyncio.run(reader.read_changed_files("octo", "repo", 123))
@@ -150,7 +155,9 @@ def test_read_metadata_uses_trusted_base_url_and_auth() -> None:
         )
 
     settings = GitHubSettings(token=SecretStr("ghp_test"))
-    client = httpx.AsyncClient(transport=httpx.MockTransport(handler))
+    client = GithubClient(
+        httpx.AsyncClient(transport=httpx.MockTransport(handler)), settings
+    )
     reader = GitHubPullRequestReader(client, settings)
 
     meta = asyncio.run(reader.read_metadata("octo", "repo", 123))
@@ -187,7 +194,9 @@ def test_read_changed_files_uses_trusted_base_url_and_auth() -> None:
         )
 
     settings = GitHubSettings(token=SecretStr("ghp_test"))
-    client = httpx.AsyncClient(transport=httpx.MockTransport(handler))
+    client = GithubClient(
+        httpx.AsyncClient(transport=httpx.MockTransport(handler)), settings
+    )
     reader = GitHubPullRequestReader(client, settings)
 
     changed_files = asyncio.run(reader.read_changed_files("octo", "repo", 123))
@@ -215,7 +224,7 @@ def _file_page() -> list[dict[str, object]]:
 def test_read_changed_files_retries_then_succeeds(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    monkeypatch.setattr("changeguard.adapters.github_client.asyncio.sleep", _no_sleep)
+    monkeypatch.setattr("changeguard.adapters.github.asyncio.sleep", _no_sleep)
     calls = {"n": 0}
 
     def handler(request: httpx.Request) -> httpx.Response:
@@ -225,7 +234,9 @@ def test_read_changed_files_retries_then_succeeds(
         return httpx.Response(200, json=_file_page())
 
     settings = GitHubSettings(token=SecretStr("ghp_test"), max_retries=5)
-    client = httpx.AsyncClient(transport=httpx.MockTransport(handler))
+    client = GithubClient(
+        httpx.AsyncClient(transport=httpx.MockTransport(handler)), settings
+    )
     reader = GitHubPullRequestReader(client, settings)
 
     changed_files = asyncio.run(reader.read_changed_files("octo", "repo", 123))
@@ -238,7 +249,7 @@ def test_read_changed_files_retries_then_succeeds(
 def test_read_changed_files_does_not_retry_non_retryable_status(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    monkeypatch.setattr("changeguard.adapters.github_client.asyncio.sleep", _no_sleep)
+    monkeypatch.setattr("changeguard.adapters.github.asyncio.sleep", _no_sleep)
     calls = {"n": 0}
 
     def handler(request: httpx.Request) -> httpx.Response:
@@ -246,7 +257,9 @@ def test_read_changed_files_does_not_retry_non_retryable_status(
         return httpx.Response(404)
 
     settings = GitHubSettings(token=SecretStr("ghp_test"), max_retries=5)
-    client = httpx.AsyncClient(transport=httpx.MockTransport(handler))
+    client = GithubClient(
+        httpx.AsyncClient(transport=httpx.MockTransport(handler)), settings
+    )
     reader = GitHubPullRequestReader(client, settings)
 
     with pytest.raises(httpx.HTTPStatusError):
@@ -258,7 +271,7 @@ def test_read_changed_files_does_not_retry_non_retryable_status(
 def test_read_changed_files_throws_rate_limits_after_max_retries(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    monkeypatch.setattr("changeguard.adapters.github_client.asyncio.sleep", _no_sleep)
+    monkeypatch.setattr("changeguard.adapters.github.asyncio.sleep", _no_sleep)
     calls = {"n": 0}
 
     def handler(request: httpx.Request) -> httpx.Response:
@@ -267,7 +280,9 @@ def test_read_changed_files_throws_rate_limits_after_max_retries(
 
     max_retries = 2
     settings = GitHubSettings(token=SecretStr("ghp_test"), max_retries=max_retries)
-    client = httpx.AsyncClient(transport=httpx.MockTransport(handler))
+    client = GithubClient(
+        httpx.AsyncClient(transport=httpx.MockTransport(handler)), settings
+    )
     reader = GitHubPullRequestReader(client, settings)
 
     with pytest.raises(httpx.HTTPStatusError):
@@ -279,7 +294,7 @@ def test_read_changed_files_throws_rate_limits_after_max_retries(
 def test_read_changed_files_retries_rate_limited_403(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    monkeypatch.setattr("changeguard.adapters.github_client.asyncio.sleep", _no_sleep)
+    monkeypatch.setattr("changeguard.adapters.github.asyncio.sleep", _no_sleep)
     calls = {"n": 0}
 
     def handler(request: httpx.Request) -> httpx.Response:
@@ -289,7 +304,9 @@ def test_read_changed_files_retries_rate_limited_403(
         return httpx.Response(200, json=_file_page())
 
     settings = GitHubSettings(token=SecretStr("ghp_test"), max_retries=5)
-    client = httpx.AsyncClient(transport=httpx.MockTransport(handler))
+    client = GithubClient(
+        httpx.AsyncClient(transport=httpx.MockTransport(handler)), settings
+    )
     reader = GitHubPullRequestReader(client, settings)
 
     changed_files = asyncio.run(reader.read_changed_files("octo", "repo", 123))
@@ -301,7 +318,7 @@ def test_read_changed_files_retries_rate_limited_403(
 def test_read_changed_files_does_not_retry_plain_403(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    monkeypatch.setattr("changeguard.adapters.github_client.asyncio.sleep", _no_sleep)
+    monkeypatch.setattr("changeguard.adapters.github.asyncio.sleep", _no_sleep)
     calls = {"n": 0}
 
     def handler(request: httpx.Request) -> httpx.Response:
@@ -309,7 +326,9 @@ def test_read_changed_files_does_not_retry_plain_403(
         return httpx.Response(403)
 
     settings = GitHubSettings(token=SecretStr("ghp_test"), max_retries=5)
-    client = httpx.AsyncClient(transport=httpx.MockTransport(handler))
+    client = GithubClient(
+        httpx.AsyncClient(transport=httpx.MockTransport(handler)), settings
+    )
     reader = GitHubPullRequestReader(client, settings)
 
     with pytest.raises(httpx.HTTPStatusError):
@@ -321,7 +340,7 @@ def test_read_changed_files_does_not_retry_plain_403(
 def test_get_with_retry_does_not_swallow_cancellation(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    monkeypatch.setattr("changeguard.adapters.github_client.asyncio.sleep", _no_sleep)
+    monkeypatch.setattr("changeguard.adapters.github.asyncio.sleep", _no_sleep)
     calls = {"n": 0}
 
     def handler(request: httpx.Request) -> httpx.Response:
@@ -329,7 +348,9 @@ def test_get_with_retry_does_not_swallow_cancellation(
         raise asyncio.CancelledError
 
     settings = GitHubSettings(token=SecretStr("ghp_test"), max_retries=5)
-    client = httpx.AsyncClient(transport=httpx.MockTransport(handler))
+    client = GithubClient(
+        httpx.AsyncClient(transport=httpx.MockTransport(handler)), settings
+    )
     reader = GitHubPullRequestReader(client, settings)
 
     with pytest.raises(asyncio.CancelledError):
@@ -341,13 +362,15 @@ def test_get_with_retry_does_not_swallow_cancellation(
 def test_failure_does_not_leak_token_in_exception(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    monkeypatch.setattr("changeguard.adapters.github_client.asyncio.sleep", _no_sleep)
+    monkeypatch.setattr("changeguard.adapters.github.asyncio.sleep", _no_sleep)
 
     def handler(request: httpx.Request) -> httpx.Response:
         return httpx.Response(404)
 
     settings = GitHubSettings(token=SecretStr("ghp_supersecret"), max_retries=3)
-    client = httpx.AsyncClient(transport=httpx.MockTransport(handler))
+    client = GithubClient(
+        httpx.AsyncClient(transport=httpx.MockTransport(handler)), settings
+    )
     reader = GitHubPullRequestReader(client, settings)
 
     with pytest.raises(httpx.HTTPStatusError) as exc_info:
