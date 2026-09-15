@@ -1,3 +1,7 @@
+import json
+
+import pytest
+
 from changeguard.domain.findings import RiskFinding, RiskLevel
 from changeguard.domain.reports import (
     AnalysisReport,
@@ -169,3 +173,66 @@ def test_derive_status() -> None:
         )
         is ReportStatus.COMPLETE
     )
+
+
+def _report(**overrides: object) -> AnalysisReport:
+    defaults: dict[str, object] = {
+        "findings": (),
+        "evidence": (),
+        "coverage": (),
+        "status": ReportStatus.COMPLETE,
+        "analysis_version": "0.0.0",
+        "repository": "example/repo",
+        "pull_request": "123",
+        "base_sha": "abc123",
+        "head_sha": "def456",
+    }
+    defaults.update(overrides)
+    return AnalysisReport(**defaults)  # type: ignore[arg-type]
+
+
+def test_complete_report_requires_base_sha() -> None:
+    with pytest.raises(ValueError, match="base_sha"):
+        _report(status=ReportStatus.COMPLETE, base_sha=None)
+
+
+def test_complete_report_requires_head_sha() -> None:
+    with pytest.raises(ValueError, match="head_sha"):
+        _report(status=ReportStatus.COMPLETE, head_sha=None)
+
+
+def test_partial_report_allows_missing_shas() -> None:
+    report = _report(status=ReportStatus.PARTIAL, base_sha=None, head_sha=None)
+
+    assert report.base_sha is None
+    assert report.head_sha is None
+
+
+def test_shas_are_serialized_exactly_as_supplied() -> None:
+    rs = serialize_report(_report(base_sha="  spaced  ", head_sha="MiXeD"))
+
+    assert rs["base_sha"] == "  spaced  "
+    assert rs["head_sha"] == "MiXeD"
+
+
+def test_serialized_report_round_trips_through_json() -> None:
+    rs = serialize_report(_report())
+
+    assert json.loads(json.dumps(rs)) == rs
+
+
+def test_evidence_rejects_parent_traversal() -> None:
+    with pytest.raises(ValueError, match=r"\.\."):
+        Evidence(path="../secret.txt")
+
+
+def test_evidence_rejects_end_before_start() -> None:
+    with pytest.raises(ValueError, match="end_line"):
+        Evidence(path="a.py", start_line=5, end_line=2)
+
+
+def test_evidence_allows_path_without_line_range() -> None:
+    evidence = Evidence(path="src/app.py")
+
+    assert evidence.start_line is None
+    assert evidence.end_line is None
