@@ -1,20 +1,21 @@
 # ChangeGuard AI — v1 roadmap and ticket board
 
-Updated: 2026-09-14
+Updated: 2026-09-15
 
 ## Start here
 
 Open this file to see the entire project. Each row links to an implementation
 ticket; `backlog.json` is the machine-readable copy of this board.
 
-Current task: **CG-008 — versioned analysis report, evidence and coverage**.
-Current code checkpoint: `8853f90` on `main`, merged and pushed.
-CG-001–CG-007 are accepted. CG-008 is In progress: the report serializer
-(`reporting.serialize_report`) and its leaf mappers landed with a test that
-locks `schema_version` and nested finding/coverage output; remaining acceptance
-(conservative partial status, coverage reason/scoping, deterministic ordering,
-CG-005 byte-compat regression) is still open. 82 tests plus Ruff, strict mypy
-and lock checks passed locally.
+Current task: **CG-010 — bounded SHA-pinned content reader** (In progress,
+steps 5–8 remain).
+Current code checkpoint: `368c077` on `main`, merged and pushed.
+CG-001–CG-009 are accepted. CG-008 is Done: the report serializer
+(`reporting.serialize_report`), its leaf mappers, conservative partial-status
+derivation and evidence/coverage validation landed with tests that lock
+`schema_version`, nested finding/coverage output, base/head SHA requirements for
+complete reports, JSON round-trip and evidence path/line-range validation. 106
+tests plus Ruff, strict mypy and lock checks passed locally.
 
 This is a proposed finite v1 backlog, not a claim that all future requirements
 are known. CG-007 makes the release boundary explicit. Later tickets are
@@ -78,9 +79,9 @@ reviewed stacked dependency is recorded.
 | [CG-005](tickets/2026-09-09-CG-005.md) | Serialize deterministic analysis findings | Done | CG-004 | Foundation |
 | [CG-006](tickets/2026-09-10-CG-006.md) | Local JSON analysis CLI | Done | CG-005 | Local vertical slice |
 | [CG-007](tickets/2026-09-10-CG-007.md) | v1 boundaries and threat model | Done | CG-006 | Evidence-backed analysis |
-| [CG-008](tickets/2026-09-10-CG-008.md) | Versioned reports, evidence and coverage | In progress | CG-007 | Evidence-backed analysis |
+| [CG-008](tickets/2026-09-10-CG-008.md) | Versioned reports, evidence and coverage | Done | CG-007 | Evidence-backed analysis |
 | [CG-009](tickets/2026-09-10-CG-009.md) | Bounded asynchronous GitHub PR reader | Done | CG-008 | Evidence-backed analysis |
-| [CG-010](tickets/2026-09-10-CG-010.md) | Safe SHA-bound content and diff evidence | Planned | CG-009 | Evidence-backed analysis |
+| [CG-010](tickets/2026-09-10-CG-010.md) | Safe SHA-bound content and diff evidence | In progress | CG-009 | Evidence-backed analysis |
 | [CG-011](tickets/2026-09-10-CG-011.md) | Scoped OpenAPI compatibility rule | Planned | CG-010 | Evidence-backed analysis |
 | [CG-012](tickets/2026-09-10-CG-012.md) | Scoped Avro compatibility rule | Planned | CG-010 | Evidence-backed analysis |
 | [CG-013](tickets/2026-09-10-CG-013.md) | Scoped Kubernetes manifest risk rule | Planned | CG-010 | Evidence-backed analysis |

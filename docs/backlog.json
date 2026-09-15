@@ -74,7 +74,7 @@
     {
       "id": "CG-008",
       "title": "Versioned reports, evidence and coverage",
-      "status": "In progress",
+      "status": "Done",
       "depends_on": [
         "CG-007"
       ],
@@ -94,7 +94,7 @@
     {
       "id": "CG-010",
       "title": "Safe SHA-bound content and diff evidence",
-      "status": "Planned",
+      "status": "In progress",
       "depends_on": [
         "CG-009"
       ],
