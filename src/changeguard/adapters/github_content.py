@@ -1,5 +1,7 @@
 import base64
 
+from httpx import HTTPStatusError
+
 from changeguard.adapters.github import GithubClient
 from changeguard.domain.content import FileContent, RemoteContentResult, Revision
 from changeguard.domain.reports import Coverage, CoverageState
@@ -13,7 +15,21 @@ class GitHubContentReader:
         self, owner: str, name: str, path: str, sha: str, ref: Revision
     ) -> RemoteContentResult:
         url = f"/repos/{owner}/{name}/contents/{path}?ref={sha}"
-        rs = await self._client.get_with_retry(link=url)
+        try:
+            rs = await self._client.get_with_retry(link=url)
+        except HTTPStatusError as e:
+            if e.response.status_code == 404:
+                return RemoteContentResult(
+                    coverage=(
+                        Coverage(
+                            rule_id="github-content",
+                            target=path,
+                            state=CoverageState.PARTIAL,
+                            reason="not found",
+                        ),
+                    )
+                )
+            raise
         data = rs.json()
 
         if data["type"] != "file":
@@ -38,10 +54,23 @@ class GitHubContentReader:
                     ),
                 )
             )
+        try:
+            text = base64.b64decode(data["content"]).decode("utf-8")
+        except UnicodeDecodeError:
+            return RemoteContentResult(
+                coverage=(
+                    Coverage(
+                        rule_id="github-content",
+                        target=path,
+                        state=CoverageState.PARTIAL,
+                        reason="binary content",
+                    ),
+                )
+            )
         return RemoteContentResult(
             content=FileContent(
                 sha=data["sha"],
-                text=base64.b64decode(data["content"]).decode("utf-8"),
+                text=text,
                 revision=ref,
             ),
             coverage=(),

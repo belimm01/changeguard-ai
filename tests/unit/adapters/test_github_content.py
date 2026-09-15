@@ -85,3 +85,39 @@ def test_github_content_oversized_is_partial_without_text() -> None:
     assert len(result.coverage) == 1
     assert result.coverage[0].state == CoverageState.PARTIAL
     assert result.coverage[0].reason.strip()
+
+
+def test_github_content_deleted_is_partial_without_text() -> None:
+    def handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(404, json={"message": "Not Found"})
+
+    settings = GitHubSettings(token=SecretStr("ghp_test"))
+    client = GithubClient(
+        httpx.AsyncClient(transport=httpx.MockTransport(handler)), settings
+    )
+    reader = GitHubContentReader(client)
+    result = asyncio.run(
+        reader.get_content("octo", "repo", "gone.py", "sha", Revision.HEAD)
+    )
+
+    assert result.content is None
+    assert len(result.coverage) == 1
+    assert result.coverage[0].state == CoverageState.PARTIAL
+    assert result.coverage[0].reason.strip()
+
+
+def test_github_content_binary_is_partial_without_text() -> None:
+    result, _ = _read(
+        type="file",
+        encoding="base64",
+        size=4,
+        name="logo.png",
+        path="logo.png",
+        content="/9j/4A==",
+        sha="3d21ec53a331a6f037a91c368710b99387d012c1",
+    )
+
+    assert result.content is None
+    assert len(result.coverage) == 1
+    assert result.coverage[0].state == CoverageState.PARTIAL
+    assert result.coverage[0].reason.strip()
