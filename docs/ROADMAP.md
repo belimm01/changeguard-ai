@@ -79,7 +79,7 @@ reviewed stacked dependency is recorded.
 | [CG-006](tickets/2026-09-10-CG-006.md) | Local JSON analysis CLI | Done | CG-005 | Local vertical slice |
 | [CG-007](tickets/2026-09-10-CG-007.md) | v1 boundaries and threat model | Done | CG-006 | Evidence-backed analysis |
 | [CG-008](tickets/2026-09-10-CG-008.md) | Versioned reports, evidence and coverage | In progress | CG-007 | Evidence-backed analysis |
-| [CG-009](tickets/2026-09-10-CG-009.md) | Bounded asynchronous GitHub PR reader | Planned | CG-008 | Evidence-backed analysis |
+| [CG-009](tickets/2026-09-10-CG-009.md) | Bounded asynchronous GitHub PR reader | Done | CG-008 | Evidence-backed analysis |
 | [CG-010](tickets/2026-09-10-CG-010.md) | Safe SHA-bound content and diff evidence | Planned | CG-009 | Evidence-backed analysis |
 | [CG-011](tickets/2026-09-10-CG-011.md) | Scoped OpenAPI compatibility rule | Planned | CG-010 | Evidence-backed analysis |
 | [CG-012](tickets/2026-09-10-CG-012.md) | Scoped Avro compatibility rule | Planned | CG-010 | Evidence-backed analysis |

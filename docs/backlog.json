@@ -84,7 +84,7 @@
     {
       "id": "CG-009",
       "title": "Bounded asynchronous GitHub PR reader",
-      "status": "Planned",
+      "status": "Done",
       "depends_on": [
         "CG-008"
       ],
