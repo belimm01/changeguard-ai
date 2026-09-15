@@ -29,18 +29,7 @@ class ChangedFile:
     patch: str | None = None
 
     def __post_init__(self) -> None:
-        if not self.path.strip():
-            raise ValueError("path cannot be empty or whitespace-only")
-        if "\0" in self.path:
-            raise ValueError("path cannot contain a null byte")
-        if "\\" in self.path:
-            raise ValueError("path must use POSIX separators")
-
-        path = PurePosixPath(self.path)
-        if path.is_absolute():
-            raise ValueError("path must be relative")
-        if ".." in path.parts:
-            raise ValueError("path cannot contain '..'")
+        validate_relative_path(self.path)
         if self.additions < 0:
             raise ValueError("additions cannot be negative")
         if self.deletions < 0:
@@ -60,3 +49,18 @@ class ChangeSet:
     @property
     def total_deletions(self) -> int:
         return sum(file.deletions for file in self.files)
+
+
+def validate_relative_path(path: str) -> None:
+    if not path.strip():
+        raise ValueError("path cannot be empty or whitespace-only")
+    if "\0" in path:
+        raise ValueError("path cannot contain a null byte")
+    if "\\" in path:
+        raise ValueError("path must use POSIX separators")
+
+    pure_path = PurePosixPath(path)
+    if pure_path.is_absolute():
+        raise ValueError("path must be relative")
+    if ".." in pure_path.parts:
+        raise ValueError("path cannot contain '..'")
