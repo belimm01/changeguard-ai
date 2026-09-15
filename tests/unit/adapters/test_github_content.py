@@ -6,44 +6,40 @@ from pydantic import SecretStr
 from changeguard.adapters.github import GithubClient
 from changeguard.adapters.github_content import GitHubContentReader
 from changeguard.config import GitHubSettings
-from changeguard.domain.content import Revision
+from changeguard.domain.content import RemoteContentResult, Revision
+from changeguard.domain.reports import CoverageState
 
 
-def test_github_content() -> None:
+def _read(
+    **json_body: object,
+) -> tuple[RemoteContentResult, dict[str, str | None]]:
     seen: dict[str, str | None] = {}
 
-    def handler(request: httpx.Request) -> httpx.Response:
+    def default_handler(request: httpx.Request) -> httpx.Response:
         seen["url"] = str(request.url)
         seen["auth"] = request.headers.get("authorization")
-        return httpx.Response(
-            200,
-            json={
-                "type": "file",
-                "encoding": "base64",
-                "size": 5362,
-                "name": "README.md",
-                "path": "README.md",
-                "content": "aGVsbG8gd29ybGQ=",
-                "sha": "3d21ec53a331a6f037a91c368710b99387d012c1",
-                "url": "https://api.github.com/repos/octokit/octokit.rb/contents/README.md",
-                "git_url": "https://api.github.com/repos/octokit/octokit.rb/git/blobs/3d21ec53a331a6f037a91c368710b99387d012c1",
-                "html_url": "https://github.com/octokit/octokit.rb/blob/master/README.md",
-                "download_url": "https://raw.githubusercontent.com/octokit/octokit.rb/master/README.md",
-                "_links": {
-                    "git": "https://api.github.com/repos/octokit/octokit.rb/git/blobs/3d21ec53a331a6f037a91c368710b99387d012c1",
-                    "self": "https://api.github.com/repos/octokit/octokit.rb/contents/README.md",
-                    "html": "https://github.com/octokit/octokit.rb/blob/master/README.md",
-                },
-            },
-        )
+        return httpx.Response(200, json=json_body)
 
     settings = GitHubSettings(token=SecretStr("ghp_test"))
     client = GithubClient(
-        httpx.AsyncClient(transport=httpx.MockTransport(handler)), settings
+        httpx.AsyncClient(transport=httpx.MockTransport(default_handler)), settings
     )
     reader = GitHubContentReader(client)
-    response = asyncio.run(
+    result = asyncio.run(
         reader.get_content("octo", "repo", "src/assets/README.md", "sha", Revision.HEAD)
+    )
+    return result, seen
+
+
+def test_github_content_file() -> None:
+    result, seen = _read(
+        type="file",
+        encoding="base64",
+        size=5362,
+        name="README.md",
+        path="README.md",
+        content="aGVsbG8gd29ybGQ=",
+        sha="3d21ec53a331a6f037a91c368710b99387d012c1",
     )
 
     assert seen["auth"] == "Bearer ghp_test"
@@ -51,6 +47,41 @@ def test_github_content() -> None:
         seen["url"]
         == "https://api.github.com/repos/octo/repo/contents/src/assets/README.md?ref=sha"
     )
-    assert response.text == "hello world"
-    assert response.sha == "3d21ec53a331a6f037a91c368710b99387d012c1"
-    assert response.revision == Revision.HEAD
+    assert result.coverage == ()
+    assert result.content is not None
+    assert result.content.text == "hello world"
+    assert result.content.sha == "3d21ec53a331a6f037a91c368710b99387d012c1"
+    assert result.content.revision == Revision.HEAD
+
+
+def test_github_content_symlink_is_partial_without_text() -> None:
+    result, _ = _read(
+        type="symlink",
+        target="/path/to/real/file",
+        size=23,
+        name="link",
+        path="bin/link",
+        sha="452a98979c88e093d682cab404a3ec82babebb48",
+    )
+
+    assert result.content is None
+    assert len(result.coverage) == 1
+    assert result.coverage[0].state == CoverageState.PARTIAL
+    assert result.coverage[0].reason.strip()
+
+
+def test_github_content_oversized_is_partial_without_text() -> None:
+    result, _ = _read(
+        type="file",
+        encoding="none",
+        size=5242880,
+        name="big.bin",
+        path="big.bin",
+        content="",
+        sha="3d21ec53a331a6f037a91c368710b99387d012c1",
+    )
+
+    assert result.content is None
+    assert len(result.coverage) == 1
+    assert result.coverage[0].state == CoverageState.PARTIAL
+    assert result.coverage[0].reason.strip()

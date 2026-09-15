@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from enum import StrEnum
 
 from changeguard.domain.models import validate_relative_path
+from changeguard.domain.reports import Coverage
 
 
 class Revision(StrEnum):
@@ -36,3 +37,9 @@ class FileContent:
     sha: str
     text: str
     revision: Revision
+
+
+@dataclass(frozen=True, slots=True)
+class RemoteContentResult:
+    coverage: tuple[Coverage, ...]
+    content: FileContent | None = None
