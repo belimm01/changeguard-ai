@@ -1,6 +1,7 @@
 import asyncio
 
 import httpx
+import pytest
 from pydantic import SecretStr
 
 from changeguard.adapters.github_client import GitHubPullRequestReader
@@ -199,3 +200,77 @@ def test_read_changed_files_uses_trusted_base_url_and_auth() -> None:
     assert files[0].path == "file1.txt"
     assert files[0].change_type is ChangeType.ADDED
     assert changed_files.coverage == ()
+
+
+async def _no_sleep(_seconds: float) -> None:
+    return None
+
+
+def _file_page() -> list[dict[str, object]]:
+    return [
+        {"filename": "file1.txt", "status": "added", "additions": 1, "deletions": 0}
+    ]
+
+
+def test_read_changed_files_retries_then_succeeds(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr("changeguard.adapters.github_client.asyncio.sleep", _no_sleep)
+    calls = {"n": 0}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        calls["n"] += 1
+        if calls["n"] < 3:
+            return httpx.Response(503)
+        return httpx.Response(200, json=_file_page())
+
+    settings = GitHubSettings(token=SecretStr("ghp_test"), max_retries=5)
+    client = httpx.AsyncClient(transport=httpx.MockTransport(handler))
+    reader = GitHubPullRequestReader(client, settings)
+
+    changed_files = asyncio.run(reader.read_changed_files("octo", "repo", 123))
+
+    assert calls["n"] == 3
+    assert len(changed_files.changeset.files) == 1
+    assert changed_files.changeset.files[0].path == "file1.txt"
+
+
+def test_read_changed_files_does_not_retry_non_retryable_status(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr("changeguard.adapters.github_client.asyncio.sleep", _no_sleep)
+    calls = {"n": 0}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        calls["n"] += 1
+        return httpx.Response(404)
+
+    settings = GitHubSettings(token=SecretStr("ghp_test"), max_retries=5)
+    client = httpx.AsyncClient(transport=httpx.MockTransport(handler))
+    reader = GitHubPullRequestReader(client, settings)
+
+    with pytest.raises(httpx.HTTPStatusError):
+        asyncio.run(reader.read_changed_files("octo", "repo", 123))
+
+    assert calls["n"] == 1
+
+
+def test_read_changed_files_throws_rate_limits_after_max_retries(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr("changeguard.adapters.github_client.asyncio.sleep", _no_sleep)
+    calls = {"n": 0}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        calls["n"] += 1
+        return httpx.Response(429)
+
+    max_retries = 2
+    settings = GitHubSettings(token=SecretStr("ghp_test"), max_retries=max_retries)
+    client = httpx.AsyncClient(transport=httpx.MockTransport(handler))
+    reader = GitHubPullRequestReader(client, settings)
+
+    with pytest.raises(httpx.HTTPStatusError):
+        asyncio.run(reader.read_changed_files("octo", "repo", 123))
+
+    assert calls["n"] == max_retries

@@ -1,3 +1,4 @@
+import asyncio
 from dataclasses import dataclass
 
 import httpx
@@ -7,6 +8,8 @@ from changeguard.adapters.github import parse_github_changed_files
 from changeguard.config import GitHubSettings
 from changeguard.domain.models import ChangedFile, ChangeSet
 from changeguard.domain.reports import Coverage, CoverageState
+
+_RETRYABLE_STATUS = frozenset({429, 500, 502, 503, 504})
 
 
 @dataclass(frozen=True, slots=True)
@@ -35,14 +38,8 @@ class GitHubPullRequestReader:
     async def read_metadata(
         self, owner: str, name: str, number: int
     ) -> PullRequestMetadata:
-        rs = await self._client.get(
-            url=f"{self._settings.base_url}/repos/{owner}/{name}/pulls/{number}",
-            headers={
-                "Authorization": f"Bearer {self._settings.token.get_secret_value()}"
-            },
-            timeout=self._settings.timeout_s,
-        )
-        rs.raise_for_status()
+        link = f"{self._settings.base_url}/repos/{owner}/{name}/pulls/{number}"
+        rs = await self.get_with_retry(link=link)
         data = rs.json()
         return PullRequestMetadata(
             owner=owner,
@@ -65,8 +62,7 @@ class GitHubPullRequestReader:
         pages = 0
         reason: str | None = None
         while link is not None:
-            rs = await self.request_changed_files(link=link)
-            rs.raise_for_status()
+            rs = await self.get_with_retry(link=link)
             pages += 1
             collected.extend(parse_github_changed_files(rs.json()).files)
 
@@ -99,12 +95,26 @@ class GitHubPullRequestReader:
             coverage=coverage,
         )
 
-    async def request_changed_files(self, link: str) -> Response:
-        rs = await self._client.get(
-            url=link,
-            headers={
-                "Authorization": f"Bearer {self._settings.token.get_secret_value()}"
-            },
-            timeout=self._settings.timeout_s,
-        )
-        return rs
+    async def get_with_retry(self, link: str) -> Response:
+        last_error: httpx.HTTPError | None = None
+        for attempt in range(self._settings.max_retries):
+            try:
+                rs = await self._client.get(
+                    url=link,
+                    headers={
+                        "Authorization": f"Bearer {self._settings.token.get_secret_value()}"
+                    },
+                    timeout=self._settings.timeout_s,
+                )
+                rs.raise_for_status()
+                return rs
+            except httpx.HTTPStatusError as e:
+                if e.response.status_code not in _RETRYABLE_STATUS:
+                    raise
+                last_error = e
+            except httpx.TimeoutException as e:
+                last_error = e
+            if attempt + 1 < self._settings.max_retries:
+                await asyncio.sleep(2**attempt)
+        assert last_error is not None
+        raise last_error
