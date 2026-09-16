@@ -132,6 +132,49 @@ def test_over_budget_yields_partial_for_later_files() -> None:
     assert results[1].coverage[0].state == CoverageState.PARTIAL
 
 
+def test_stale_head_sha_skips_fetch() -> None:
+    reader = AsyncMock()
+    change_set = ChangeSet(
+        files=(
+            ChangedFile(
+                path="m.py", change_type=ChangeType.MODIFIED, additions=1, deletions=1
+            ),
+        )
+    )
+    results = asyncio.run(
+        fetch_changed_content(
+            _meta(), change_set, reader, total_bytes=1000, expected_head_sha="OLD"
+        )
+    )
+
+    reader.get_content.assert_not_awaited()
+    assert len(results) == 1
+    assert results[0].content is None
+    assert results[0].coverage[0].state == CoverageState.PARTIAL
+
+
+def test_matching_head_sha_fetches_normally() -> None:
+    reader = AsyncMock()
+    reader.get_content.return_value = RemoteContentResult(
+        content=FileContent(sha="x", text="x", revision=Revision.HEAD, size=1),
+        coverage=(),
+    )
+    change_set = ChangeSet(
+        files=(
+            ChangedFile(
+                path="new.py", change_type=ChangeType.ADDED, additions=1, deletions=0
+            ),
+        )
+    )
+    asyncio.run(
+        fetch_changed_content(
+            _meta(), change_set, reader, total_bytes=1000, expected_head_sha="HEAD1"
+        )
+    )
+
+    assert reader.get_content.await_count == 1
+
+
 def _meta() -> PullRequestMetadata:
     return PullRequestMetadata(
         owner="o",

@@ -1,16 +1,15 @@
 # ChangeGuard AI — v1 roadmap and ticket board
 
-Updated: 2026-09-15
+Updated: 2026-09-16
 
 ## Start here
 
 Open this file to see the entire project. Each row links to an implementation
 ticket; `backlog.json` is the machine-readable copy of this board.
 
-Current task: **CG-010 — bounded SHA-pinned content reader** (In progress,
-steps 5–8 remain).
-Current code checkpoint: `368c077` on `main`, merged and pushed.
-CG-001–CG-009 are accepted. CG-008 is Done: the report serializer
+Current task: **none active** — CG-010 accepted; CG-011/CG-012/CG-013 are now
+unblocked and ready to start.
+CG-001–CG-010 are accepted. CG-008 is Done: the report serializer
 (`reporting.serialize_report`), its leaf mappers, conservative partial-status
 derivation and evidence/coverage validation landed with tests that lock
 `schema_version`, nested finding/coverage output, base/head SHA requirements for
@@ -81,7 +80,7 @@ reviewed stacked dependency is recorded.
 | [CG-007](tickets/2026-09-10-CG-007.md) | v1 boundaries and threat model | Done | CG-006 | Evidence-backed analysis |
 | [CG-008](tickets/2026-09-10-CG-008.md) | Versioned reports, evidence and coverage | Done | CG-007 | Evidence-backed analysis |
 | [CG-009](tickets/2026-09-10-CG-009.md) | Bounded asynchronous GitHub PR reader | Done | CG-008 | Evidence-backed analysis |
-| [CG-010](tickets/2026-09-10-CG-010.md) | Safe SHA-bound content and diff evidence | In progress | CG-009 | Evidence-backed analysis |
+| [CG-010](tickets/2026-09-10-CG-010.md) | Safe SHA-bound content and diff evidence | Done | CG-009 | Evidence-backed analysis |
 | [CG-011](tickets/2026-09-10-CG-011.md) | Scoped OpenAPI compatibility rule | Planned | CG-010 | Evidence-backed analysis |
 | [CG-012](tickets/2026-09-10-CG-012.md) | Scoped Avro compatibility rule | Planned | CG-010 | Evidence-backed analysis |
 | [CG-013](tickets/2026-09-10-CG-013.md) | Scoped Kubernetes manifest risk rule | Planned | CG-010 | Evidence-backed analysis |

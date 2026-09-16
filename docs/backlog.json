@@ -94,7 +94,7 @@
     {
       "id": "CG-010",
       "title": "Safe SHA-bound content and diff evidence",
-      "status": "In progress",
+      "status": "Done",
       "depends_on": [
         "CG-009"
       ],

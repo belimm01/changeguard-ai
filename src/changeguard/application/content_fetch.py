@@ -3,6 +3,7 @@ from typing import Protocol
 from changeguard.adapters.github_pull_request import PullRequestMetadata
 from changeguard.domain.content import RemoteContentResult, Revision
 from changeguard.domain.models import ChangeSet, ChangeType
+from changeguard.domain.reports import Coverage, CoverageState
 
 _SIDES = {
     ChangeType.ADDED: (Revision.HEAD,),
@@ -29,7 +30,22 @@ async def fetch_changed_content(
     change_set: ChangeSet,
     reader: ContentReader,
     total_bytes: int,
+    expected_head_sha: str | None = None,
 ) -> list[RemoteContentResult]:
+    if expected_head_sha is not None and expected_head_sha != metadata.head_sha:
+        return [
+            RemoteContentResult(
+                content=None,
+                coverage=(
+                    Coverage(
+                        rule_id="github-changed-files",
+                        target=f"{metadata.owner}/{metadata.name}#{metadata.number}",
+                        state=CoverageState.PARTIAL,
+                        reason="head sha mismatch",
+                    ),
+                ),
+            )
+        ]
     remaining_bytes = total_bytes
     contents: list[RemoteContentResult] = []
     for file in change_set.files:
