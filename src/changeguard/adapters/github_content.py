@@ -13,7 +13,13 @@ class GitHubContentReader:
         self._client = client
 
     async def get_content(
-        self, owner: str, name: str, path: str, sha: str, ref: Revision
+        self,
+        owner: str,
+        name: str,
+        path: str,
+        sha: str,
+        ref: Revision,
+        remaining_bytes: int | None = None,
     ) -> RemoteContentResult:
         validate_relative_path(path)
         url = f"/repos/{owner}/{name}/contents/{path}?ref={sha}"
@@ -33,7 +39,6 @@ class GitHubContentReader:
                 )
             raise
         data = rs.json()
-
         if data["type"] != "file":
             return RemoteContentResult(
                 coverage=(
@@ -42,6 +47,17 @@ class GitHubContentReader:
                         target=path,
                         state=CoverageState.PARTIAL,
                         reason="not a regular file",
+                    ),
+                )
+            )
+        if remaining_bytes is not None and data["size"] > remaining_bytes:
+            return RemoteContentResult(
+                coverage=(
+                    Coverage(
+                        rule_id="github-content",
+                        target=path,
+                        state=CoverageState.PARTIAL,
+                        reason="aggregate content byte limit exceeded",
                     ),
                 )
             )

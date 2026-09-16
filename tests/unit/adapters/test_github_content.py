@@ -27,7 +27,13 @@ def _read(
     )
     reader = GitHubContentReader(client)
     result = asyncio.run(
-        reader.get_content("octo", "repo", "src/assets/README.md", "sha", Revision.HEAD)
+        reader.get_content(
+            "octo",
+            "repo",
+            "src/assets/README.md",
+            "sha",
+            Revision.HEAD,
+        )
     )
     return result, seen
 
@@ -122,6 +128,72 @@ def test_github_content_binary_is_partial_without_text() -> None:
     assert len(result.coverage) == 1
     assert result.coverage[0].state == CoverageState.PARTIAL
     assert result.coverage[0].reason.strip()
+
+
+def test_github_content_skips_when_over_remaining_budget() -> None:
+    seen: dict[str, str | None] = {}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen["url"] = str(request.url)
+        return httpx.Response(
+            200,
+            json={
+                "type": "file",
+                "encoding": "base64",
+                "size": 5000,
+                "name": "big.py",
+                "path": "big.py",
+                "content": "aGVsbG8=",
+                "sha": "3d21ec53a331a6f037a91c368710b99387d012c1",
+            },
+        )
+
+    settings = GitHubSettings(token=SecretStr("ghp_test"))
+    client = GithubClient(
+        httpx.AsyncClient(transport=httpx.MockTransport(handler)), settings
+    )
+    reader = GitHubContentReader(client)
+    result = asyncio.run(
+        reader.get_content(
+            "octo", "repo", "big.py", "sha", Revision.HEAD, remaining_bytes=1000
+        )
+    )
+
+    assert result.content is None
+    assert len(result.coverage) == 1
+    assert result.coverage[0].state == CoverageState.PARTIAL
+    assert result.coverage[0].reason.strip()
+
+
+def test_github_content_returns_content_within_remaining_budget() -> None:
+    def handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(
+            200,
+            json={
+                "type": "file",
+                "encoding": "base64",
+                "size": 11,
+                "name": "small.py",
+                "path": "small.py",
+                "content": "aGVsbG8gd29ybGQ=",
+                "sha": "3d21ec53a331a6f037a91c368710b99387d012c1",
+            },
+        )
+
+    settings = GitHubSettings(token=SecretStr("ghp_test"))
+    client = GithubClient(
+        httpx.AsyncClient(transport=httpx.MockTransport(handler)), settings
+    )
+    reader = GitHubContentReader(client)
+    result = asyncio.run(
+        reader.get_content(
+            "octo", "repo", "small.py", "sha", Revision.HEAD, remaining_bytes=1000
+        )
+    )
+
+    assert result.coverage == ()
+    assert result.content is not None
+    assert result.content.text == "hello world"
 
 
 @pytest.mark.parametrize("bad_path", ["", "../secret", "/etc/passwd", "a\\b", "a\0b"])
