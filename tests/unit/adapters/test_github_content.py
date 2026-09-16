@@ -1,6 +1,7 @@
 import asyncio
 
 import httpx
+import pytest
 from pydantic import SecretStr
 
 from changeguard.adapters.github import GithubClient
@@ -121,3 +122,24 @@ def test_github_content_binary_is_partial_without_text() -> None:
     assert len(result.coverage) == 1
     assert result.coverage[0].state == CoverageState.PARTIAL
     assert result.coverage[0].reason.strip()
+
+
+@pytest.mark.parametrize("bad_path", ["", "../secret", "/etc/passwd", "a\\b", "a\0b"])
+def test_github_content_rejects_bad_path_before_request(bad_path: str) -> None:
+    called = False
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        nonlocal called
+        called = True
+        return httpx.Response(200, json={})
+
+    settings = GitHubSettings(token=SecretStr("ghp_test"))
+    client = GithubClient(
+        httpx.AsyncClient(transport=httpx.MockTransport(handler)), settings
+    )
+    reader = GitHubContentReader(client)
+
+    with pytest.raises(ValueError):
+        asyncio.run(reader.get_content("octo", "repo", bad_path, "sha", Revision.HEAD))
+
+    assert called is False

@@ -4,6 +4,7 @@ from httpx import HTTPStatusError
 
 from changeguard.adapters.github import GithubClient
 from changeguard.domain.content import FileContent, RemoteContentResult, Revision
+from changeguard.domain.models import validate_relative_path
 from changeguard.domain.reports import Coverage, CoverageState
 
 
@@ -14,6 +15,7 @@ class GitHubContentReader:
     async def get_content(
         self, owner: str, name: str, path: str, sha: str, ref: Revision
     ) -> RemoteContentResult:
+        validate_relative_path(path)
         url = f"/repos/{owner}/{name}/contents/{path}?ref={sha}"
         try:
             rs = await self._client.get_with_retry(link=url)
