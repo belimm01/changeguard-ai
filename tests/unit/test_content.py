@@ -1,6 +1,6 @@
 import pytest
 
-from changeguard.domain.content import FileContentRef, Revision
+from changeguard.domain.content import DiffLineEvidence, FileContentRef, Revision
 
 
 def test_content_invalid_path_raises_value_error() -> None:
@@ -25,3 +25,71 @@ def test_content_accept_valid_path() -> None:
         sha="sha",
     )
     assert content.path == "src/changeguard/models.py"
+
+
+def test_diff_line_evidence_accepts_valid_props() -> None:
+    diff = DiffLineEvidence(
+        path="src/changeguard/models.py",
+        side=Revision.HEAD,
+        start_line=1,
+        end_line=2,
+        sha="sha",
+    )
+
+    assert diff.path == "src/changeguard/models.py"
+    assert diff.start_line == 1
+    assert diff.end_line == 2
+    assert diff.side == Revision.HEAD
+    assert diff.sha == "sha"
+
+
+def test_diff_line_evidence_rejects_invalid_path() -> None:
+    with pytest.raises(ValueError, match="path cannot contain '..'"):
+        DiffLineEvidence(
+            path="../secrets",
+            side=Revision.BASE,
+            start_line=1,
+            end_line=2,
+            sha="sha",
+        )
+
+
+def test_diff_line_evidence_rejects_non_positive_lines() -> None:
+    with pytest.raises(ValueError, match="start_line must be greater than 0"):
+        DiffLineEvidence(
+            path="src/changeguard/models.py",
+            side=Revision.BASE,
+            start_line=0,
+            end_line=1,
+            sha="sha",
+        )
+    with pytest.raises(ValueError, match="end_line must be greater than 0"):
+        DiffLineEvidence(
+            path="src/changeguard/models.py",
+            side=Revision.BASE,
+            start_line=1,
+            end_line=0,
+            sha="sha",
+        )
+
+
+def test_diff_line_evidence_rejects_end_before_start() -> None:
+    with pytest.raises(ValueError, match="less than or equal to end_line"):
+        DiffLineEvidence(
+            path="src/changeguard/models.py",
+            side=Revision.BASE,
+            start_line=5,
+            end_line=2,
+            sha="sha",
+        )
+
+
+def test_diff_line_evidence_rejects_empty_sha() -> None:
+    with pytest.raises(ValueError, match="sha cannot be empty"):
+        DiffLineEvidence(
+            path="src/changeguard/models.py",
+            side=Revision.BASE,
+            start_line=1,
+            end_line=2,
+            sha="",
+        )

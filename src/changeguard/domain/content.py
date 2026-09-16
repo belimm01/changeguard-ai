@@ -11,6 +11,26 @@ class Revision(StrEnum):
 
 
 @dataclass(frozen=True, slots=True)
+class DiffLineEvidence:
+    path: str
+    side: Revision
+    start_line: int
+    end_line: int
+    sha: str
+
+    def __post_init__(self) -> None:
+        validate_relative_path(self.path)
+        if self.start_line < 1:
+            raise ValueError("start_line must be greater than 0")
+        if self.end_line < 1:
+            raise ValueError("end_line must be greater than 0")
+        if self.start_line > self.end_line:
+            raise ValueError("start_line must be less than or equal to end_line")
+        if not self.sha.strip():
+            raise ValueError("sha cannot be empty or whitespace-only")
+
+
+@dataclass(frozen=True, slots=True)
 class FileContentRef:
     """A file's contents at a specific revision."""
 
