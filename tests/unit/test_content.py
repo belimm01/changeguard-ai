@@ -106,6 +106,7 @@ def test_diff_line_evidence_content_mapping() -> None:
             revision=Revision.BASE,
             sha="sha",
             text="line 1\nline 2",
+            size=12,
         ),
         path="src/changeguard/models.py",
         start_line=1,
@@ -121,7 +122,7 @@ def test_diff_line_evidence_content_mapping() -> None:
 def test_diff_line_evidence_from_content_validates() -> None:
     with pytest.raises(ValueError, match="less than or equal to end_line"):
         DiffLineEvidence.from_content(
-            content=FileContent(revision=Revision.HEAD, sha="abc", text="x"),
+            content=FileContent(revision=Revision.HEAD, sha="abc", text="x", size=1023),
             path="a.py",
             start_line=5,
             end_line=2,

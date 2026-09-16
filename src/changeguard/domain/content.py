@@ -73,6 +73,7 @@ class FileContent:
     sha: str
     text: str
     revision: Revision
+    size: int
 
 
 @dataclass(frozen=True, slots=True)
