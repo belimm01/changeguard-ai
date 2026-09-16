@@ -87,7 +87,7 @@ class GitHubContentReader:
             )
         return RemoteContentResult(
             content=FileContent(
-                sha=data["sha"],
+                sha=sha,
                 text=text,
                 revision=ref,
             ),

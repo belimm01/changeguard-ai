@@ -57,8 +57,36 @@ def test_github_content_file() -> None:
     assert result.coverage == ()
     assert result.content is not None
     assert result.content.text == "hello world"
-    assert result.content.sha == "3d21ec53a331a6f037a91c368710b99387d012c1"
+    assert result.content.sha == "sha"
     assert result.content.revision == Revision.HEAD
+
+
+def test_github_content_binds_requested_commit_sha_not_blob_sha() -> None:
+    def handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(
+            200,
+            json={
+                "type": "file",
+                "encoding": "base64",
+                "size": 11,
+                "name": "a.py",
+                "path": "a.py",
+                "content": "aGVsbG8gd29ybGQ=",
+                "sha": "blob9f8e7d0000000000000000000000000000000",
+            },
+        )
+
+    settings = GitHubSettings(token=SecretStr("ghp_test"))
+    client = GithubClient(
+        httpx.AsyncClient(transport=httpx.MockTransport(handler)), settings
+    )
+    reader = GitHubContentReader(client)
+    result = asyncio.run(
+        reader.get_content("octo", "repo", "a.py", "commit123", Revision.HEAD)
+    )
+
+    assert result.content is not None
+    assert result.content.sha == "commit123"
 
 
 def test_github_content_symlink_is_partial_without_text() -> None:
