@@ -29,6 +29,22 @@ class DiffLineEvidence:
         if not self.sha.strip():
             raise ValueError("sha cannot be empty or whitespace-only")
 
+    @classmethod
+    def from_content(
+        cls,
+        content: "FileContent",
+        path: str,
+        start_line: int,
+        end_line: int,
+    ) -> "DiffLineEvidence":
+        return cls(
+            path=path,
+            start_line=start_line,
+            end_line=end_line,
+            side=content.revision,
+            sha=content.sha,
+        )
+
 
 @dataclass(frozen=True, slots=True)
 class FileContentRef:

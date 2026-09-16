@@ -1,6 +1,11 @@
 import pytest
 
-from changeguard.domain.content import DiffLineEvidence, FileContentRef, Revision
+from changeguard.domain.content import (
+    DiffLineEvidence,
+    FileContent,
+    FileContentRef,
+    Revision,
+)
 
 
 def test_content_invalid_path_raises_value_error() -> None:
@@ -92,4 +97,32 @@ def test_diff_line_evidence_rejects_empty_sha() -> None:
             start_line=1,
             end_line=2,
             sha="",
+        )
+
+
+def test_diff_line_evidence_content_mapping() -> None:
+    diff = DiffLineEvidence.from_content(
+        content=FileContent(
+            revision=Revision.BASE,
+            sha="sha",
+            text="line 1\nline 2",
+        ),
+        path="src/changeguard/models.py",
+        start_line=1,
+        end_line=2,
+    )
+    assert diff.path == "src/changeguard/models.py"
+    assert diff.start_line == 1
+    assert diff.end_line == 2
+    assert diff.side == Revision.BASE
+    assert diff.sha == "sha"
+
+
+def test_diff_line_evidence_from_content_validates() -> None:
+    with pytest.raises(ValueError, match="less than or equal to end_line"):
+        DiffLineEvidence.from_content(
+            content=FileContent(revision=Revision.HEAD, sha="abc", text="x"),
+            path="a.py",
+            start_line=5,
+            end_line=2,
         )
