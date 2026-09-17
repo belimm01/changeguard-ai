@@ -17,3 +17,10 @@ class ApiSettings(BaseModel):
     max_request_bytes: int = 65_536
     timeout_s: float = 30.0
     max_findings: int = 100
+
+
+class DatabaseSettings(BaseModel):
+    model_config = ConfigDict(frozen=True)
+    url: SecretStr
+    pool_size: int = 5
+    max_overflow: int = 10
