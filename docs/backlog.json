@@ -104,7 +104,7 @@
     {
       "id": "CG-011",
       "title": "Scoped OpenAPI compatibility rule",
-      "status": "Planned",
+      "status": "Done",
       "depends_on": [
         "CG-010"
       ],
@@ -114,7 +114,7 @@
     {
       "id": "CG-012",
       "title": "Scoped Avro compatibility rule",
-      "status": "Planned",
+      "status": "Done",
       "depends_on": [
         "CG-010"
       ],
@@ -124,7 +124,7 @@
     {
       "id": "CG-013",
       "title": "Scoped Kubernetes manifest risk rule",
-      "status": "Planned",
+      "status": "Done",
       "depends_on": [
         "CG-010"
       ],
@@ -134,7 +134,7 @@
     {
       "id": "CG-014",
       "title": "Authenticated analysis HTTP endpoint",
-      "status": "Planned",
+      "status": "Done",
       "depends_on": [
         "CG-008",
         "CG-009",
