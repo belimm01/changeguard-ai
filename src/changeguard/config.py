@@ -9,3 +9,11 @@ class GitHubSettings(BaseModel):
     max_pages: int = 10
     max_files: int = 300
     max_retries: int = 3
+
+
+class ApiSettings(BaseModel):
+    model_config = ConfigDict(frozen=True)
+    secret: SecretStr
+    max_request_bytes: int = 65_536
+    timeout_s: float = 30.0
+    max_findings: int = 100
