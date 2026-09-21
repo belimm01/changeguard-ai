@@ -1,8 +1,11 @@
+from datetime import UTC, datetime
+from typing import Any
+
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from changeguard.db.models import AnalysisJobRecord
-from changeguard.domain.jobs import AnalysisJobIdentity, JobState
+from changeguard.domain.jobs import AnalysisJobIdentity, JobState, validate_transition
 
 
 class AnalysisJobRepository:
@@ -31,6 +34,35 @@ class AnalysisJobRepository:
             state=JobState.QUEUED,
         )
         self._session.add(job)
+        await self._session.commit()
+        await self._session.refresh(job)
+        return job
+
+    async def mark_running(self, job: AnalysisJobRecord) -> AnalysisJobRecord:
+        validate_transition(job.state, JobState.RUNNING)
+        job.state = JobState.RUNNING
+        await self._session.commit()
+        await self._session.refresh(job)
+        return job
+
+    async def mark_completed(
+        self, job: AnalysisJobRecord, report_json: dict[str, Any]
+    ) -> AnalysisJobRecord:
+        validate_transition(job.state, JobState.COMPLETED)
+        job.state = JobState.COMPLETED
+        job.report_json = report_json
+        job.completed_at = datetime.now(UTC)
+        await self._session.commit()
+        await self._session.refresh(job)
+        return job
+
+    async def mark_partial(
+        self, job: AnalysisJobRecord, report_json: dict[str, Any]
+    ) -> AnalysisJobRecord:
+        validate_transition(job.state, JobState.PARTIAL)
+        job.state = JobState.PARTIAL
+        job.report_json = report_json
+        job.completed_at = datetime.now(UTC)
         await self._session.commit()
         await self._session.refresh(job)
         return job
