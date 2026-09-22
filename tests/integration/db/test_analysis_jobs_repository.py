@@ -118,3 +118,48 @@ def test_invalid_transition_leaves_stored_state_unchanged() -> None:
             assert reloaded.completed_at is None
 
     asyncio.run(scenario())
+
+
+def test_valid_path_running_then_failed_truncates_reason() -> None:
+    async def scenario() -> None:
+        async with fresh_session() as session:
+            repo = AnalysisJobRepository(session)
+            job = await repo.create_queued(_identity())
+
+            await repo.mark_running(job)
+            limit = AnalysisJobRecord.failure_reason.type.length
+            assert limit is not None
+            await repo.mark_failed(job, reason="x" * (limit * 2))
+
+            reloaded = (
+                await session.execute(
+                    select(AnalysisJobRecord).where(AnalysisJobRecord.id == job.id)
+                )
+            ).scalar_one()
+            assert reloaded.state == JobState.FAILED
+            assert reloaded.completed_at is not None
+            assert reloaded.failure_reason is not None
+            assert len(reloaded.failure_reason) == limit
+
+    asyncio.run(scenario())
+
+
+def test_invalid_transition_to_failed_leaves_stored_state_unchanged() -> None:
+    async def scenario() -> None:
+        async with fresh_session() as session:
+            repo = AnalysisJobRepository(session)
+            job = await repo.create_queued(_identity())
+
+            with pytest.raises(InvalidJobTransition):
+                await repo.mark_failed(job, reason="boom")
+
+            reloaded = (
+                await session.execute(
+                    select(AnalysisJobRecord).where(AnalysisJobRecord.id == job.id)
+                )
+            ).scalar_one()
+            assert reloaded.state == JobState.QUEUED
+            assert reloaded.failure_reason is None
+            assert reloaded.completed_at is None
+
+    asyncio.run(scenario())

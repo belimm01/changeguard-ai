@@ -66,3 +66,15 @@ class AnalysisJobRepository:
         await self._session.commit()
         await self._session.refresh(job)
         return job
+
+    async def mark_failed(
+        self, job: AnalysisJobRecord, reason: str
+    ) -> AnalysisJobRecord:
+        validate_transition(job.state, JobState.FAILED)
+        limit = AnalysisJobRecord.failure_reason.type.length
+        job.state = JobState.FAILED
+        job.failure_reason = reason[:limit]
+        job.completed_at = datetime.now(UTC)
+        await self._session.commit()
+        await self._session.refresh(job)
+        return job
