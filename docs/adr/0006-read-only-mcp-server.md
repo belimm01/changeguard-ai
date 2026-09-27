@@ -2,7 +2,7 @@
 
 Status: Proposed — post-v1 (CG-036, CG-037)
 
-Date: 2026-09-14
+Date: 2026-09-27 (formalizes the design in CG-036, planned 2026-09-14)
 
 ## Context
 

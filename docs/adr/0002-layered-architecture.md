@@ -2,7 +2,7 @@
 
 Status: Accepted
 
-Date: 2026-09-10
+Date: 2026-09-27 (formalizes the design in CG-001–CG-004, planned 2026-09-10)
 
 ## Context
 
@@ -19,7 +19,7 @@ The code is layered by dependency direction, inward only:
 | Layer | Package | Responsibility |
 | --- | --- | --- |
 | Domain | `domain/` | Frozen, slotted dataclasses with `__post_init__` invariants (`ChangedFile`, `ChangeSet`, findings, evidence, jobs). No framework imports. |
-| Rules | `rules/`, `parsing/` | Pure functions `ChangeSet -> findings`, plus bounded, safe parsers for OpenAPI, Avro and Kubernetes documents. |
+| Rules | `rules/`, `parsing/` | Pure functions: `ChangeSet -> findings` for dependency changes, and `(path, base, head) -> findings + coverage` for OpenAPI, Avro and Kubernetes, backed by bounded, safe parsers. |
 | Application | `application/` | Orchestrates rules and content fetching; rules are injected as callables, so no DI container is needed. |
 | Adapters | `adapters/`, `api/`, `db/`, `repositories/`, `cli.py` | GitHub client, FastAPI endpoint, async SQLAlchemy persistence and CLI. Pydantic v2 validates every external payload here. |
 | Public contract | `dto/`, `serialization.py`, `reporting.py` | Frozen Pydantic DTOs with an explicit `schema_version`; dedicated mappers translate domain objects to the wire format. |

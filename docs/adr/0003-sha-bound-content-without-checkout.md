@@ -2,7 +2,7 @@
 
 Status: Accepted
 
-Date: 2026-09-10
+Date: 2026-09-27 (formalizes the design in CG-010, planned 2026-09-10)
 
 ## Context
 
@@ -20,8 +20,9 @@ large files, and leaves the analysis unclear about which revision it saw.
   and line range. Diff-line evidence is bound to the same SHAs.
 - Paths are validated (no traversal, absolute paths or symlinks). Per-file and
   aggregate byte budgets, pagination caps and timeouts are enforced.
-- If the PR head moves during analysis, the result is marked stale rather than
-  mixed across revisions.
+- Before fetching, the PR head SHA is re-checked; if it no longer matches the
+  analyzed revision, the result is marked `partial` (head SHA mismatch) rather
+  than mixing revisions.
 - Deleted, binary, oversized or unfetchable files produce explicit `partial` or
   `unsupported` coverage instead of being skipped silently.
 - Repository code is never cloned, installed or executed.

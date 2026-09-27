@@ -1,6 +1,5 @@
 {
   "scope": "ChangeGuard AI v1",
-  "baseline_commit": "277f69c",
   "tickets": [
     {
       "id": "CG-001",

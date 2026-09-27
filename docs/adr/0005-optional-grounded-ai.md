@@ -2,7 +2,7 @@
 
 Status: Accepted — implementation planned (CG-016–CG-022)
 
-Date: 2026-09-10
+Date: 2026-09-27 (formalizes the design in CG-016–CG-020, planned 2026-09-10)
 
 ## Context
 

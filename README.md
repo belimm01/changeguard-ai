@@ -40,12 +40,15 @@ flowchart LR
     classDef done fill:#d6f5d6,stroke:#2e7d32,color:#1b1b1b;
     classDef wip fill:#fff4cc,stroke:#b8860b,color:#1b1b1b;
     classDef planned fill:#eeeeee,stroke:#888,color:#1b1b1b,stroke-dasharray:4 3;
-    class CLI,PIPE,RULES,RPT done;
-    class PG wip;
+    class CLI,RULES,RPT done;
+    class PIPE,PG wip;
     class WH,WK,AI,CHK,MCP planned;
 ```
 
-Green: implemented. Yellow: in progress. Grey: planned.
+Green: implemented. Yellow: in progress. Grey: planned. The GitHub reader,
+SHA-bound content fetch and all four rules exist and are tested individually;
+the CLI currently runs the Python dependency rule, and end-to-end wiring of the
+full pipeline is in progress.
 
 The domain core is framework-free. Rules are pure functions over immutable
 value objects, and Pydantic validates every untrusted payload at the adapter
@@ -59,8 +62,8 @@ reported as coverage, not hidden.
   with a locked dependency graph.
 - **Service:** FastAPI, Pydantic v2, async `httpx` with timeouts, pagination
   caps and retry policy.
-- **Persistence:** PostgreSQL 16, async SQLAlchemy 2.0 (`asyncpg`), Alembic
-  migrations.
+- **Persistence (in progress):** PostgreSQL, async SQLAlchemy 2.0 (`asyncpg`);
+  Alembic migrations next.
 - **Parsing:** safe, bounded YAML/JSON parsing for OpenAPI, Avro and Kubernetes.
 - **Planned AI layer:** provider-neutral structured-output LLM adapter, lexical
   retrieval (embeddings optional), deterministic citation validation, offline
@@ -101,7 +104,7 @@ with a contract, acceptance criteria and exit evidence.
 
 ## Development
 
-Requires Python and [uv](https://docs.astral.sh/uv/). Every change passes these
+Requires Python 3.13 and [uv](https://docs.astral.sh/uv/). Every change passes these
 gates before it is merged:
 
 ```bash
@@ -111,6 +114,16 @@ uv run ruff format --check .
 uv run mypy src tests
 uv lock --check
 ```
+
+PostgreSQL integration tests are skipped unless a database is reachable. Start a
+disposable one with:
+
+```bash
+docker run -d --rm --name changeguard-pg -p 55432:5432 \
+  -e POSTGRES_USER=cg -e POSTGRES_PASSWORD=cg -e POSTGRES_DB=changeguard postgres:16
+```
+
+or point `CHANGEGUARD_TEST_DB_URL` at another disposable instance.
 
 Work is planned as small tickets with explicit acceptance criteria and merged to
 `main` one tested increment at a time. Design, scope and review decisions are my

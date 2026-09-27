@@ -2,7 +2,7 @@
 
 Status: Accepted — persistence in progress (CG-015); inbox, worker and outbox planned (CG-024–CG-026)
 
-Date: 2026-09-10
+Date: 2026-09-27 (formalizes the design in CG-015, planned 2026-09-10)
 
 ## Context
 
@@ -14,7 +14,7 @@ infrastructure has a real operational cost.
 
 ## Decision
 
-Use PostgreSQL 16 for all durable state, accessed through async SQLAlchemy 2.0
+Use PostgreSQL for all durable state, accessed through async SQLAlchemy 2.0
 (`asyncpg`) with schema changes managed by Alembic migrations. No message
 broker is introduced.
 

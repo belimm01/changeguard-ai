@@ -12,12 +12,7 @@ Architecture decisions that shape these tickets are recorded in
 Current task: **CG-015** (persistent analysis jobs) is in progress: async
 SQLAlchemy models, repository, job state transitions and failure storage have
 landed; Alembic migrations are next.
-CG-001–CG-014 are accepted. CG-008 is Done: the report serializer
-(`reporting.serialize_report`), its leaf mappers, conservative partial-status
-derivation and evidence/coverage validation landed with tests that lock
-`schema_version`, nested finding/coverage output, base/head SHA requirements for
-complete reports, JSON round-trip and evidence path/line-range validation. 106
-tests plus Ruff, strict mypy and lock checks passed locally.
+CG-001–CG-014 are done.
 
 This is a proposed finite v1 backlog, not a claim that all future requirements
 are known. CG-007 makes the release boundary explicit. Later tickets are
@@ -145,12 +140,11 @@ are accepted; they need not wait for every preceding row.
 - Write one failing test, run it, implement the smallest behavior, then add the
   next scenario. Preserve existing public contracts unless a versioned change is
   explicitly specified. Keep commits focused.
-- Run focused tests and the existing quality gates; obtain independent review.
+- Run focused tests and all quality gates, and review every change independently.
   New integration/evaluation commands become runnable only when introduced.
-- Record accepted SHA and verification evidence, then update BOTH this board and
-  `backlog.json`. Do not mark work done from a successful write or mock alone.
-- Avoid silently stacking on unmerged feature work. Record the dependency SHA
-  and intended integration base. Commit/push/merge only when requested.
+- Record verification evidence, then update both this board and `backlog.json`.
+  Do not mark work done from a successful write or mock alone.
+- Branch each increment from `main`; do not stack on unmerged work.
 
 Existing baseline gates (not evidence that future work already passes):
 

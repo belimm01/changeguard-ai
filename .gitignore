@@ -50,6 +50,4 @@ secrets/
 credentials*.json
 *secret*.json
 *.token
-docs/SESSION_HANDOFF.md
-docs/CODESPACES.md
 docs/*.local.md
