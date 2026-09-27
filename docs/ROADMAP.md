@@ -1,14 +1,17 @@
 # ChangeGuard AI — v1 roadmap and ticket board
 
-Updated: 2026-09-17
+Updated: 2026-09-27
 
 ## Start here
 
 Open this file to see the entire project. Each row links to an implementation
 ticket; `backlog.json` is the machine-readable copy of this board.
+Architecture decisions that shape these tickets are recorded in
+[`adr/`](adr/) and the [threat model](threat-model.md).
 
-Current task: **none active** — CG-011, CG-012, CG-013 and CG-014 accepted;
-CG-015 (persistent analysis jobs) is now unblocked and ready to start.
+Current task: **CG-015** (persistent analysis jobs) is in progress: async
+SQLAlchemy models, repository, job state transitions and failure storage have
+landed; Alembic migrations are next.
 CG-001–CG-014 are accepted. CG-008 is Done: the report serializer
 (`reporting.serialize_report`), its leaf mappers, conservative partial-status
 derivation and evidence/coverage validation landed with tests that lock
@@ -85,7 +88,7 @@ reviewed stacked dependency is recorded.
 | [CG-012](tickets/2026-09-10-CG-012.md) | Scoped Avro compatibility rule | Done | CG-010 | Evidence-backed analysis |
 | [CG-013](tickets/2026-09-10-CG-013.md) | Scoped Kubernetes manifest risk rule | Done | CG-010 | Evidence-backed analysis |
 | [CG-014](tickets/2026-09-10-CG-014.md) | Authenticated analysis HTTP endpoint | Done | CG-008, CG-009, CG-010, CG-011, CG-012, CG-013 | Evidence-backed analysis |
-| [CG-015](tickets/2026-09-10-CG-015.md) | Persistent analysis jobs and reports | Planned | CG-014 | Evidence-backed analysis |
+| [CG-015](tickets/2026-09-10-CG-015.md) | Persistent analysis jobs and reports | In progress | CG-014 | Evidence-backed analysis |
 | [CG-016](tickets/2026-09-10-CG-016.md) | Bounded repository context corpus | Planned | CG-010 | Grounded AI |
 | [CG-017](tickets/2026-09-10-CG-017.md) | Deterministic context retrieval | Planned | CG-016 | Grounded AI |
 | [CG-018](tickets/2026-09-10-CG-018.md) | Optional structured LLM adapter | Planned | CG-008 | Grounded AI |
@@ -101,13 +104,13 @@ reviewed stacked dependency is recorded.
 | [CG-028](tickets/2026-09-10-CG-028.md) | Container deployment and recovery runbook | Planned | CG-022, CG-027 | Release |
 | [CG-029](tickets/2026-09-10-CG-029.md) | CI quality, security and evaluation gates | Planned | CG-021, CG-022, CG-028 | Release |
 | [CG-030](tickets/2026-09-10-CG-030.md) | v1 acceptance, sandbox demo and handoff | Planned | CG-011, CG-012, CG-013, CG-021, CG-022, CG-026, CG-027, CG-028, CG-029 | Release |
-| [CG-031](tickets/2026-09-13-CG-031.md) | Optional embeddings-based semantic retrieval | Planned | CG-016, CG-017, CG-020 | AI Engineer extensions |
-| [CG-032](tickets/2026-09-13-CG-032.md) | LLM observability and cost accounting | Planned | CG-020, CG-027 | AI Engineer extensions |
-| [CG-033](tickets/2026-09-13-CG-033.md) | Resilient provider calls: retries, backoff, cache | Planned | CG-018 | AI Engineer extensions |
-| [CG-034](tickets/2026-09-13-CG-034.md) | Streaming advisory output over SSE | Planned | CG-014, CG-020 | AI Engineer extensions |
-| [CG-035](tickets/2026-09-13-CG-035.md) | LLM guardrails: redaction and prompt-injection defense | Planned | CG-018, CG-019, CG-022 | AI Engineer extensions |
-| [CG-036](tickets/2026-09-14-CG-036.md) | Read-only MCP server for ChangeGuard reports and evidence | Planned | CG-015, CG-019, CG-027 | AI Engineer extensions |
-| [CG-037](tickets/2026-09-27-CG-037.md) | Evaluate MCP tool use with DeepEval | Planned | CG-021, CG-036 | AI Engineer extensions |
+| [CG-031](tickets/2026-09-13-CG-031.md) | Optional embeddings-based semantic retrieval | Planned | CG-016, CG-017, CG-020 | Post-v1 extensions |
+| [CG-032](tickets/2026-09-13-CG-032.md) | LLM observability and cost accounting | Planned | CG-020, CG-027 | Post-v1 extensions |
+| [CG-033](tickets/2026-09-13-CG-033.md) | Resilient provider calls: retries, backoff, cache | Planned | CG-018 | Post-v1 extensions |
+| [CG-034](tickets/2026-09-13-CG-034.md) | Streaming advisory output over SSE | Planned | CG-014, CG-020 | Post-v1 extensions |
+| [CG-035](tickets/2026-09-13-CG-035.md) | LLM guardrails: redaction and prompt-injection defense | Planned | CG-018, CG-019, CG-022 | Post-v1 extensions |
+| [CG-036](tickets/2026-09-14-CG-036.md) | Read-only MCP server for ChangeGuard reports and evidence | Planned | CG-015, CG-019, CG-027 | Post-v1 extensions |
+| [CG-037](tickets/2026-09-27-CG-037.md) | Evaluate MCP tool use with DeepEval | Planned | CG-021, CG-036 | Post-v1 extensions |
 
 ## Milestone exit criteria
 
@@ -121,7 +124,7 @@ reviewed stacked dependency is recorded.
    and revision-correct advisory Checks under duplicate/racing deliveries.
 5. Release — CG-027–CG-030: observable deployment, tested recovery, green CI
    and a real approved sandbox run. No release-complete claim without this proof.
-6. AI Engineer extensions (post-v1, opt-in) — CG-031–CG-037: job-relevant depth
+6. Post-v1 extensions (opt-in) — CG-031–CG-037: production AI depth
    (semantic RAG, LLM observability/cost, provider resilience, streaming,
    guardrails, read-only MCP integration for report/evidence consumption and its
    DeepEval-based tool-use evaluation). These

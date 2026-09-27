@@ -149,7 +149,7 @@
     {
       "id": "CG-015",
       "title": "Persistent analysis jobs and reports",
-      "status": "Planned",
+      "status": "In progress",
       "depends_on": [
         "CG-014"
       ],
@@ -341,7 +341,7 @@
         "CG-017",
         "CG-020"
       ],
-      "milestone": "AI Engineer extensions",
+      "milestone": "Post-v1 extensions",
       "path": "tickets/2026-09-13-CG-031.md"
     },
     {
@@ -352,7 +352,7 @@
         "CG-020",
         "CG-027"
       ],
-      "milestone": "AI Engineer extensions",
+      "milestone": "Post-v1 extensions",
       "path": "tickets/2026-09-13-CG-032.md"
     },
     {
@@ -362,7 +362,7 @@
       "depends_on": [
         "CG-018"
       ],
-      "milestone": "AI Engineer extensions",
+      "milestone": "Post-v1 extensions",
       "path": "tickets/2026-09-13-CG-033.md"
     },
     {
@@ -373,7 +373,7 @@
         "CG-014",
         "CG-020"
       ],
-      "milestone": "AI Engineer extensions",
+      "milestone": "Post-v1 extensions",
       "path": "tickets/2026-09-13-CG-034.md"
     },
     {
@@ -385,7 +385,7 @@
         "CG-019",
         "CG-022"
       ],
-      "milestone": "AI Engineer extensions",
+      "milestone": "Post-v1 extensions",
       "path": "tickets/2026-09-13-CG-035.md"
     },
     {
@@ -397,7 +397,7 @@
         "CG-019",
         "CG-027"
       ],
-      "milestone": "AI Engineer extensions",
+      "milestone": "Post-v1 extensions",
       "path": "tickets/2026-09-14-CG-036.md"
     },
     {
@@ -408,7 +408,7 @@
         "CG-021",
         "CG-036"
       ],
-      "milestone": "AI Engineer extensions",
+      "milestone": "Post-v1 extensions",
       "path": "tickets/2026-09-27-CG-037.md"
     }
   ]
