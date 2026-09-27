@@ -22,6 +22,24 @@ decision and threat controls are documented in
 Project tracking: [v1 roadmap and all tickets](docs/ROADMAP.md).
 The roadmap separates accepted implementation from current and planned work.
 
+## Development
+
+Requires Python and [uv](https://docs.astral.sh/uv/). Every change passes these
+gates before it is merged:
+
+```bash
+uv run pytest -q
+uv run ruff check .
+uv run ruff format --check .
+uv run mypy src tests
+uv lock --check
+```
+
+Work is planned as small tickets with explicit acceptance criteria and merged to
+`main` one tested increment at a time. Design, scope and review decisions are my
+own; AI coding assistants are used as pair programmers and reviewers, and the
+commits they contributed to carry a `Co-Authored-By` trailer.
+
 ## Local JSON analysis
 
 Run the analyzer with a GitHub-shaped JSON document supplied on standard input:
