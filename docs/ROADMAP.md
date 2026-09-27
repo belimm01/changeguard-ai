@@ -157,7 +157,7 @@ uv lock --check
 git diff --check
 ```
 
-## Planning assumptions to validate in CG-007
+## Planning assumptions
 
 - GitHub is the first provider; one authorized sandbox installation is sufficient
   for v1, but installation/repository authorization must still be enforced.
