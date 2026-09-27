@@ -1,5 +1,8 @@
 # ChangeGuard AI
 
+[![CI](https://github.com/belimm01/changeguard-ai/actions/workflows/ci.yml/badge.svg)](https://github.com/belimm01/changeguard-ai/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 ChangeGuard AI is an advisory pull-request change-impact analyzer. It reports
 evidence-backed risks and recommendations; a human remains responsible for the
 merge decision.
@@ -157,3 +160,7 @@ returns exit code `0`, whether findings are present or not. Malformed JSON,
 invalid changed-file data, and input read or decoding failures leave standard
 output empty, write a short diagnostic to standard error, and return exit code
 `2`. The `--help` option displays usage, and unknown arguments are rejected.
+
+## License
+
+[MIT](LICENSE)
