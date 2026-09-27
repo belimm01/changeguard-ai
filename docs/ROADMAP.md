@@ -107,6 +107,7 @@ reviewed stacked dependency is recorded.
 | [CG-034](tickets/2026-09-13-CG-034.md) | Streaming advisory output over SSE | Planned | CG-014, CG-020 | AI Engineer extensions |
 | [CG-035](tickets/2026-09-13-CG-035.md) | LLM guardrails: redaction and prompt-injection defense | Planned | CG-018, CG-019, CG-022 | AI Engineer extensions |
 | [CG-036](tickets/2026-09-14-CG-036.md) | Read-only MCP server for ChangeGuard reports and evidence | Planned | CG-015, CG-019, CG-027 | AI Engineer extensions |
+| [CG-037](tickets/2026-09-27-CG-037.md) | Evaluate MCP tool use with DeepEval | Planned | CG-021, CG-036 | AI Engineer extensions |
 
 ## Milestone exit criteria
 
@@ -120,9 +121,10 @@ reviewed stacked dependency is recorded.
    and revision-correct advisory Checks under duplicate/racing deliveries.
 5. Release — CG-027–CG-030: observable deployment, tested recovery, green CI
    and a real approved sandbox run. No release-complete claim without this proof.
-6. AI Engineer extensions (post-v1, opt-in) — CG-031–CG-036: job-relevant depth
+6. AI Engineer extensions (post-v1, opt-in) — CG-031–CG-037: job-relevant depth
    (semantic RAG, LLM observability/cost, provider resilience, streaming,
-   guardrails, read-only MCP integration for report/evidence consumption). These
+   guardrails, read-only MCP integration for report/evidence consumption and its
+   DeepEval-based tool-use evaluation). These
    require accepted v1 prerequisites, add no v1 obligations, and stay single-host
    with no external managed vector DB or agent framework.
 

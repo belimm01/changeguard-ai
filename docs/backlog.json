@@ -399,6 +399,17 @@
       ],
       "milestone": "AI Engineer extensions",
       "path": "tickets/2026-09-14-CG-036.md"
+    },
+    {
+      "id": "CG-037",
+      "title": "Evaluate MCP tool use with DeepEval",
+      "status": "Planned",
+      "depends_on": [
+        "CG-021",
+        "CG-036"
+      ],
+      "milestone": "AI Engineer extensions",
+      "path": "tickets/2026-09-27-CG-037.md"
     }
   ]
 }
