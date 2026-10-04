@@ -1,6 +1,6 @@
 # ADR 0004: PostgreSQL as system of record, job queue, inbox and outbox
 
-Status: Accepted — persistence in progress (CG-015); inbox, worker and outbox planned (CG-024–CG-026)
+Status: Accepted — persistence implemented (CG-015); inbox, worker and outbox planned (CG-024–CG-026)
 
 Date: 2026-09-27 (formalizes the design in CG-015, planned 2026-09-10)
 

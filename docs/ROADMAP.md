@@ -1,6 +1,6 @@
 # ChangeGuard AI — v1 roadmap and ticket board
 
-Updated: 2026-09-27
+Updated: 2026-10-04
 
 ## Start here
 
@@ -9,10 +9,9 @@ ticket; `backlog.json` is the machine-readable copy of this board.
 Architecture decisions that shape these tickets are recorded in
 [`adr/`](adr/) and the [threat model](threat-model.md).
 
-Current task: **CG-015** (persistent analysis jobs) is in progress: async
-SQLAlchemy models, repository, job state transitions and failure storage have
-landed; Alembic migrations are next.
-CG-001–CG-014 are done.
+Next task: **CG-016** introduces a bounded repository context corpus for retrieval.
+CG-001–CG-015 are done, including PostgreSQL persistence, reversible Alembic
+migrations, concurrent duplicate handling and sanitized failure storage.
 
 This is a proposed finite v1 backlog, not a claim that all future requirements
 are known. CG-007 makes the release boundary explicit. Later tickets are
@@ -83,7 +82,7 @@ reviewed stacked dependency is recorded.
 | [CG-012](tickets/2026-09-10-CG-012.md) | Scoped Avro compatibility rule | Done | CG-010 | Evidence-backed analysis |
 | [CG-013](tickets/2026-09-10-CG-013.md) | Scoped Kubernetes manifest risk rule | Done | CG-010 | Evidence-backed analysis |
 | [CG-014](tickets/2026-09-10-CG-014.md) | Authenticated analysis HTTP endpoint | Done | CG-008, CG-009, CG-010, CG-011, CG-012, CG-013 | Evidence-backed analysis |
-| [CG-015](tickets/2026-09-10-CG-015.md) | Persistent analysis jobs and reports | In progress | CG-014 | Evidence-backed analysis |
+| [CG-015](tickets/2026-09-10-CG-015.md) | Persistent analysis jobs and reports | Done | CG-014 | Evidence-backed analysis |
 | [CG-016](tickets/2026-09-10-CG-016.md) | Bounded repository context corpus | Planned | CG-010 | Grounded AI |
 | [CG-017](tickets/2026-09-10-CG-017.md) | Deterministic context retrieval | Planned | CG-016 | Grounded AI |
 | [CG-018](tickets/2026-09-10-CG-018.md) | Optional structured LLM adapter | Planned | CG-008 | Grounded AI |

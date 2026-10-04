@@ -65,8 +65,8 @@ reported as coverage, not hidden.
   with a locked dependency graph.
 - **Service:** FastAPI, Pydantic v2, async `httpx` with timeouts, pagination
   caps and retry policy.
-- **Persistence (in progress):** PostgreSQL, async SQLAlchemy 2.0 (`asyncpg`);
-  Alembic migrations next.
+- **Persistence:** PostgreSQL, async SQLAlchemy 2.0 (`asyncpg`), reversible
+  Alembic migrations, idempotent job creation and versioned report storage.
 - **Parsing:** safe, bounded YAML/JSON parsing for OpenAPI, Avro and Kubernetes.
 - **Planned AI layer:** provider-neutral structured-output LLM adapter, lexical
   retrieval (embeddings optional), deterministic citation validation, offline
@@ -99,7 +99,7 @@ with a contract, acceptance criteria and exit evidence.
 | --- | --- | --- |
 | Foundation | Domain model, first rule, GitHub payload adapter, rule orchestration | Done |
 | Local vertical slice | JSON-in/JSON-out CLI with defined exit codes | Done |
-| Evidence-backed analysis | Versioned reports, async GitHub reader, SHA-bound content, OpenAPI/Avro/Kubernetes rules, authenticated API, persistence | Persistence in progress |
+| Evidence-backed analysis | Versioned reports, async GitHub reader, SHA-bound content, OpenAPI/Avro/Kubernetes rules, authenticated API, persistence | Persistence verified; full pipeline wiring remains |
 | Grounded AI | Context corpus, retrieval, LLM adapter, citation validation, evaluation, adversarial tests | Planned |
 | GitHub delivery | GitHub App auth, webhook inbox, durable worker, idempotent Checks | Planned |
 | Release | Telemetry, container deployment, CI gates, sandbox acceptance run | Planned |

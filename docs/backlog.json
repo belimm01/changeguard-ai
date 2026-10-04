@@ -148,7 +148,7 @@
     {
       "id": "CG-015",
       "title": "Persistent analysis jobs and reports",
-      "status": "In progress",
+      "status": "Done",
       "depends_on": [
         "CG-014"
       ],
