@@ -3,7 +3,7 @@ from itertools import pairwise
 
 import pytest
 
-from changeguard.application.corpus import split_chunk
+from changeguard.application.corpus import is_corpus_path, split_chunk
 from changeguard.domain.content import Revision
 from changeguard.domain.corpus import CorpusChunk
 
@@ -184,3 +184,43 @@ def test_chunk_rejects_blank_shas(source_chunk: CorpusChunk, sha: str) -> None:
         replace(source_chunk, commit_sha=sha)
     with pytest.raises(ValueError, match="blob_sha must be set"):
         replace(source_chunk, blob_sha=sha)
+
+
+@pytest.mark.parametrize(
+    "path,expected",
+    [
+        ("README", True),
+        ("README.md", True),
+        ("README.notes", True),
+        ("service/README.md", True),
+        ("docs/api.md", True),
+        ("docs/guide.txt", True),
+        ("adr/decision.txt", True),
+        ("docs/adr/decision.md", True),
+        ("schema.avsc", True),
+        ("schema.yaml", True),
+        ("schema.yml", True),
+        ("schema.json", True),
+        ("guide.rst", True),
+        ("notes.md", True),
+        ("src/main.py", False),
+        ("docs-old/guide.txt", False),
+        ("adr-old/decision.txt", False),
+        ("building.md", True),
+        ("node_modules/readme.md", False),
+        ("services/api/node_modules/readme.md", False),
+        ("docs/.git/config", False),
+        (".git/config", False),
+        (".venv/readme.md", False),
+        ("dist/api.json", False),
+        ("build/api.yaml", False),
+        ("docs/build/api.yaml", False),
+        ("docs/uv.lock", False),
+        ("docs/yarn.lock", False),
+        ("docs/package-lock.json", False),
+        ("npm-shrinkwrap.json", False),
+        ("pnpm-lock.yaml", False),
+    ],
+)
+def test_corpus_path_selection(path: str, expected: bool) -> None:
+    assert is_corpus_path(path) is expected
