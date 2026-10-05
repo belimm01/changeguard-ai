@@ -40,6 +40,6 @@ def is_corpus_path(path: str) -> bool:
         return False
     return (
         source.name.startswith("README")
-        or path.startswith(("docs/", "adr/"))
+        or (len(source.parts) > 1 and source.parts[0] in {"docs", "adr"})
         or source.suffix in {".md", ".rst", ".yaml", ".yml", ".json", ".avsc"}
     )
