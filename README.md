@@ -69,8 +69,8 @@ reported as coverage, not hidden.
   Alembic migrations, idempotent job creation and versioned report storage.
 - **Parsing:** safe, bounded YAML/JSON parsing for OpenAPI, Avro and Kubernetes.
 - **AI layer:** bounded corpus, lexical retrieval, optional structured-output
-  Ollama adapter and deterministic citation validation. Live generation remains
-  unverified. Broader evaluation, adversarial suites, embeddings and MCP are planned.
+  Ollama adapter and deterministic citation validation. Local generation is
+  verified on the bundled synthetic example. Broader evaluation, adversarial suites, embeddings and MCP are planned.
 - **Planned delivery:** GitHub App authentication, a webhook inbox, a
   lease-based worker, a transactional outbox to GitHub Checks, privacy-safe
   telemetry, containers and CI security gates.
@@ -99,7 +99,7 @@ with a contract, acceptance criteria and exit evidence.
 | Foundation | Domain model, first rule, GitHub payload adapter, rule orchestration | Done |
 | Local vertical slice | JSON-in/JSON-out CLI with defined exit codes | Done |
 | Evidence-backed analysis | Versioned reports, async GitHub reader, SHA-bound content, OpenAPI/Avro/Kubernetes rules, authenticated API, persistence | Persistence verified; full pipeline wiring remains |
-| Grounded AI | Context corpus, retrieval, LLM adapter, citation validation, evaluation, adversarial tests | Corpus/retrieval implemented; live generation pending |
+| Grounded AI | Context corpus, retrieval, LLM adapter, citation validation, evaluation, adversarial tests | Corpus/retrieval implemented; local RAG example verified |
 | GitHub delivery | GitHub App auth, webhook inbox, durable worker, idempotent Checks | Planned |
 | Release | Telemetry, container deployment, CI gates, sandbox acceptance run | Planned |
 | Post-v1 extensions | Semantic retrieval, LLM cost observability, SSE streaming, guardrails, MCP server and evaluation | Planned |
@@ -141,8 +141,14 @@ AI enrichment are available through a separate explicit-input runner:
 uv run python -m changeguard.rag < examples/rag/review.json
 ```
 
-This default run shows retrieval with generation disabled. The optional Ollama
-adapter has mocked-transport coverage; a live model run is not yet verified.
+This default run shows retrieval with generation disabled. A live local run with
+Ollama and `qwen3.5:4b` produced accepted citations on the synthetic example:
+
+```bash
+uv run python -m changeguard.rag --provider ollama --model qwen3.5:4b < examples/rag/review.json
+```
+
+The command requires the local server and model described below.
 See [RAG usage and limits](docs/rag.md) and the [AI data policy](docs/ai-data-policy.md).
 
 ## Local JSON analysis

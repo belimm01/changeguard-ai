@@ -11,8 +11,9 @@ Architecture decisions that shape these tickets are recorded in
 
 CG-001–CG-017 are done, including bounded context extraction and deterministic
 retrieval. The optional generation/citation/enrichment implementation is available
-for integration review; CG-018–CG-020 remain unaccepted pending provider activation
-and their remaining acceptance checks. Live generation has not been verified.
+for integration review; CG-018–CG-020 remain unaccepted pending their full
+acceptance checks. Live local generation with Ollama/Qwen3.5 has been verified
+on the synthetic pagination example, including accepted citations.
 See [RAG usage](rag.md) for the explicit-input runner.
 
 This is a proposed finite v1 backlog, not a claim that all future requirements

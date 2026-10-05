@@ -30,13 +30,33 @@ reason `disabled`. This is a retrieval run, not live generation evidence.
 With an installed, running Ollama server and an already available local model:
 
 ```bash
-uv run python -m changeguard.rag --provider ollama --model YOUR_LOCAL_MODEL < examples/rag/review.json
+uv run python -m changeguard.rag --provider ollama --model qwen3.5:4b < examples/rag/review.json
 ```
 
 The runner neither installs nor downloads models. Use a local structured-output
 capable model and review the [data policy](ai-data-policy.md) before activation.
-No live provider run has been verified in the implementation environment.
-Mocked transport and fake-model tests verify the integration contract only.
+A live local run was verified on 2026-10-05 with Ollama 0.34.4 and
+`qwen3.5:4b` (Q4_K_M). Model digest:
+`d8b0f5e9760cd1682034f292d7ef72ec46f432149be0df7574bf2d6e92e38c04`.
+The server used loopback only, cloud disabled, and an 8,192-token context.
+The synthetic pagination example returned `ai.status: available`, one accepted
+advisory, zero rejected items and citations to both selected sources. It
+recommended reusing a previous-version cursor and verifying rollback decoding.
+The original deterministic finding remained `high`. This verifies the local
+example, not production pull-request analysis or general model accuracy.
+
+For a session-only server, start Ollama in a separate terminal:
+
+```bash
+OLLAMA_NO_CLOUD=1 OLLAMA_HOST=127.0.0.1:11434 OLLAMA_CONTEXT_LENGTH=8192 ollama serve
+```
+
+Stop that foreground server with Ctrl+C. The adapter unloads the model after
+each request. No login service is required. Download the model once if absent:
+
+```bash
+ollama pull qwen3.5:4b
+```
 
 Inspect `retrieval.selected` for ranking scores, reasons, source IDs and line
 ranges. Inspect `report.ai` for accepted advisories, rejected counts, source IDs,
