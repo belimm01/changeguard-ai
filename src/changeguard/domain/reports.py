@@ -3,7 +3,10 @@
 from dataclasses import dataclass
 from enum import StrEnum
 from pathlib import PurePosixPath
+from typing import TYPE_CHECKING
 
+if TYPE_CHECKING:
+    from changeguard.domain.ai_output import AiEnrichment
 from changeguard.domain.findings import RiskFinding
 
 
@@ -88,6 +91,7 @@ class AnalysisReport:
     findings: tuple[RiskFinding, ...]
     evidence: tuple[Evidence, ...]
     coverage: tuple[Coverage, ...]
+    ai: "AiEnrichment | None" = None
 
     def __post_init__(self) -> None:
         if not self.analysis_version.strip():

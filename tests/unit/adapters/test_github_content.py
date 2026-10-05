@@ -87,6 +87,8 @@ def test_github_content_binds_requested_commit_sha_not_blob_sha() -> None:
 
     assert result.content is not None
     assert result.content.sha == "commit123"
+    assert result.content.path == "a.py"
+    assert result.content.blob_sha == "blob9f8e7d0000000000000000000000000000000"
 
 
 def test_github_content_symlink_is_partial_without_text() -> None:

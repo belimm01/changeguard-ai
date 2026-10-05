@@ -44,8 +44,8 @@ flowchart LR
     classDef wip fill:#fff4cc,stroke:#b8860b,color:#1b1b1b;
     classDef planned fill:#eeeeee,stroke:#888,color:#1b1b1b,stroke-dasharray:4 3;
     class CLI,RULES,RPT done;
-    class PIPE,PG wip;
-    class WH,WK,AI,CHK,MCP planned;
+    class PIPE,PG,AI wip;
+    class WH,WK,CHK,MCP planned;
 ```
 
 Green: implemented. Yellow: in progress. Grey: planned. The GitHub reader,
@@ -68,10 +68,9 @@ reported as coverage, not hidden.
 - **Persistence:** PostgreSQL, async SQLAlchemy 2.0 (`asyncpg`), reversible
   Alembic migrations, idempotent job creation and versioned report storage.
 - **Parsing:** safe, bounded YAML/JSON parsing for OpenAPI, Avro and Kubernetes.
-- **Planned AI layer:** provider-neutral structured-output LLM adapter, lexical
-  retrieval (embeddings optional), deterministic citation validation, offline
-  evaluation and adversarial suites, an MCP server and DeepEval tool-use
-  evaluation.
+- **AI layer:** bounded corpus, lexical retrieval, optional structured-output
+  Ollama adapter and deterministic citation validation. Live generation remains
+  unverified. Broader evaluation, adversarial suites, embeddings and MCP are planned.
 - **Planned delivery:** GitHub App authentication, a webhook inbox, a
   lease-based worker, a transactional outbox to GitHub Checks, privacy-safe
   telemetry, containers and CI security gates.
@@ -100,7 +99,7 @@ with a contract, acceptance criteria and exit evidence.
 | Foundation | Domain model, first rule, GitHub payload adapter, rule orchestration | Done |
 | Local vertical slice | JSON-in/JSON-out CLI with defined exit codes | Done |
 | Evidence-backed analysis | Versioned reports, async GitHub reader, SHA-bound content, OpenAPI/Avro/Kubernetes rules, authenticated API, persistence | Persistence verified; full pipeline wiring remains |
-| Grounded AI | Context corpus, retrieval, LLM adapter, citation validation, evaluation, adversarial tests | Planned |
+| Grounded AI | Context corpus, retrieval, LLM adapter, citation validation, evaluation, adversarial tests | Corpus/retrieval implemented; live generation pending |
 | GitHub delivery | GitHub App auth, webhook inbox, durable worker, idempotent Checks | Planned |
 | Release | Telemetry, container deployment, CI gates, sandbox acceptance run | Planned |
 | Post-v1 extensions | Semantic retrieval, LLM cost observability, SSE streaming, guardrails, MCP server and evaluation | Planned |
@@ -132,6 +131,19 @@ Work is planned as small tickets with explicit acceptance criteria and merged to
 `main` one tested increment at a time. Design, scope and review decisions are my
 own; AI coding assistants are used as pair programmers and reviewers, and the
 commits they contributed to carry a `Co-Authored-By` trailer.
+
+## Grounded context and advisory output
+
+A bounded corpus, deterministic lexical retrieval and citation-validated optional
+AI enrichment are available through a separate explicit-input runner:
+
+```bash
+uv run python -m changeguard.rag < examples/rag/review.json
+```
+
+This default run shows retrieval with generation disabled. The optional Ollama
+adapter has mocked-transport coverage; a live model run is not yet verified.
+See [RAG usage and limits](docs/rag.md) and the [AI data policy](docs/ai-data-policy.md).
 
 ## Local JSON analysis
 

@@ -1,3 +1,5 @@
+from dataclasses import asdict
+
 from changeguard.domain.reports import (
     AnalysisReport,
     Coverage,
@@ -27,7 +29,14 @@ def serialize_report(report: AnalysisReport) -> dict[str, object]:
         base_sha=report.base_sha,
         head_sha=report.head_sha,
     )
-    return dto.model_dump(mode="json")
+    result = dto.model_dump(mode="json")
+    if report.ai is not None:
+        result["ai"] = {
+            **asdict(report.ai),
+            "accepted_count": report.ai.accepted_count,
+            "rejected_count": report.ai.rejected_count,
+        }
+    return result
 
 
 def derive_status(coverages: tuple[Coverage, ...]) -> ReportStatus:

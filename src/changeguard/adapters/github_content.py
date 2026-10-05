@@ -86,6 +86,13 @@ class GitHubContentReader:
                 )
             )
         return RemoteContentResult(
-            content=FileContent(sha=sha, text=text, revision=ref, size=data["size"]),
+            content=FileContent(
+                sha=sha,
+                text=text,
+                revision=ref,
+                size=data["size"],
+                path=path,
+                blob_sha=data.get("sha"),
+            ),
             coverage=(),
         )
