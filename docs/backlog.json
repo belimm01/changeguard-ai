@@ -158,7 +158,7 @@
     {
       "id": "CG-016",
       "title": "Bounded repository context corpus",
-      "status": "Done",
+      "status": "Planned",
       "depends_on": [
         "CG-010"
       ],
@@ -168,7 +168,7 @@
     {
       "id": "CG-017",
       "title": "Deterministic context retrieval",
-      "status": "Done",
+      "status": "Planned",
       "depends_on": [
         "CG-016"
       ],

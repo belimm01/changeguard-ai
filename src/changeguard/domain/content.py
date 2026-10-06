@@ -74,8 +74,6 @@ class FileContent:
     text: str
     revision: Revision
     size: int
-    path: str | None = None
-    blob_sha: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
