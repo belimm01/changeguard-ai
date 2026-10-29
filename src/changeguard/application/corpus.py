@@ -62,22 +62,32 @@ def build_corpus(
 ) -> Corpus:
     """Select eligible sources in a stable order and chunk them within budgets.
 
-    Sources beyond max_sources and chunks beyond the chunk or byte budget are
-    counted as omitted, so a partial corpus is never reported as complete.
+    The corpus is a deterministic prefix: once a chunk would exceed the chunk
+    or byte budget, it and every later chunk are counted as omitted, so a
+    partial corpus is never reported as complete and never has gaps.
     """
+    if min(max_sources, max_chunks, max_total_bytes) < 0:
+        raise ValueError("corpus budgets cannot be negative")
+
     eligible = sorted(
         (source for source in sources if is_corpus_path(source.path)),
-        key=lambda source: (source.path, source.side),
+        key=lambda source: (source.path, source.side, source.sha, source.text),
     )
     kept = eligible[:max_sources]
 
     chunks: list[CorpusChunk] = []
     total_bytes = 0
     omitted_chunks = 0
+    budget_exhausted = False
     for source in kept:
         for chunk in chunk_text(source):
             chunk_bytes = len(chunk.text.encode("utf-8"))
-            if len(chunks) >= max_chunks or total_bytes + chunk_bytes > max_total_bytes:
+            if (
+                budget_exhausted
+                or len(chunks) >= max_chunks
+                or total_bytes + chunk_bytes > max_total_bytes
+            ):
+                budget_exhausted = True
                 omitted_chunks += 1
                 continue
             chunks.append(chunk)

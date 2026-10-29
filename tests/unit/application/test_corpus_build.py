@@ -1,3 +1,5 @@
+import pytest
+
 from changeguard.application.corpus import build_corpus
 from changeguard.domain.content import Revision
 from changeguard.domain.corpus import CorpusSource
@@ -54,3 +56,28 @@ def test_build_corpus_omits_chunks_beyond_total_byte_budget() -> None:
 
     assert [chunk.path for chunk in corpus.chunks] == ["docs/doc-0.md", "docs/doc-1.md"]
     assert corpus.omitted_chunks == 1
+
+
+def test_build_corpus_stops_at_first_chunk_over_byte_budget() -> None:
+    big = source("docs/a.md", text="0123456789\n")
+    small = source("docs/b.md", text="x\n")
+
+    corpus = build_corpus((small, big), max_total_bytes=5)
+
+    assert corpus.chunks == ()
+    assert corpus.omitted_chunks == 2
+
+
+def test_build_corpus_orders_duplicate_path_and_side_independently_of_input() -> None:
+    first = CorpusSource(path="docs/a.md", side=Revision.HEAD, sha="s1", text="a\n")
+    second = CorpusSource(path="docs/a.md", side=Revision.HEAD, sha="s2", text="b\n")
+
+    assert build_corpus((first, second)) == build_corpus((second, first))
+
+
+@pytest.mark.parametrize(
+    "budget", [{"max_sources": -1}, {"max_chunks": -1}, {"max_total_bytes": -1}]
+)
+def test_build_corpus_rejects_negative_budgets(budget: dict[str, int]) -> None:
+    with pytest.raises(ValueError):
+        build_corpus((source("docs/a.md"),), **budget)
