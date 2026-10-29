@@ -71,3 +71,11 @@ def test_corpus_chunk_from_source_copies_provenance() -> None:
         end_line=2,
         text="b\n",
     )
+
+
+def test_corpus_is_partial_when_chunks_were_omitted_or_truncated() -> None:
+    truncated = CorpusChunk(**(VALID | {"truncated": True}))
+
+    assert Corpus(chunks=(), omitted_chunks=1).is_partial is True
+    assert Corpus(chunks=(truncated,)).is_partial is True
+    assert Corpus(chunks=(CorpusChunk(**VALID),)).is_partial is False

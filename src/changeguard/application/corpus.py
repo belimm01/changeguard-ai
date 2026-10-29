@@ -1,6 +1,10 @@
-from changeguard.domain.corpus import CorpusChunk, CorpusSource
+from changeguard.application.corpus_paths import is_corpus_path
+from changeguard.domain.corpus import Corpus, CorpusChunk, CorpusSource
 
+MAX_SOURCES = 32
+MAX_CHUNKS = 128
 MAX_CHUNK_BYTES = 8 * 1024
+MAX_CORPUS_BYTES = 256 * 1024
 _MIN_CHUNK_BYTES = 4
 
 
@@ -48,6 +52,42 @@ def chunk_text(
             )
         )
     return tuple(chunks)
+
+
+def build_corpus(
+    sources: tuple[CorpusSource, ...],
+    max_sources: int = MAX_SOURCES,
+    max_chunks: int = MAX_CHUNKS,
+    max_total_bytes: int = MAX_CORPUS_BYTES,
+) -> Corpus:
+    """Select eligible sources in a stable order and chunk them within budgets.
+
+    Sources beyond max_sources and chunks beyond the chunk or byte budget are
+    counted as omitted, so a partial corpus is never reported as complete.
+    """
+    eligible = sorted(
+        (source for source in sources if is_corpus_path(source.path)),
+        key=lambda source: (source.path, source.side),
+    )
+    kept = eligible[:max_sources]
+
+    chunks: list[CorpusChunk] = []
+    total_bytes = 0
+    omitted_chunks = 0
+    for source in kept:
+        for chunk in chunk_text(source):
+            chunk_bytes = len(chunk.text.encode("utf-8"))
+            if len(chunks) >= max_chunks or total_bytes + chunk_bytes > max_total_bytes:
+                omitted_chunks += 1
+                continue
+            chunks.append(chunk)
+            total_bytes += chunk_bytes
+
+    return Corpus(
+        chunks=tuple(chunks),
+        omitted_sources=len(eligible) - len(kept),
+        omitted_chunks=omitted_chunks,
+    )
 
 
 def _split_lines(text: str) -> list[str]:

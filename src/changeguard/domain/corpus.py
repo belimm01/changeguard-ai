@@ -68,11 +68,18 @@ class Corpus:
 
     chunks: tuple[CorpusChunk, ...]
     omitted_sources: int = 0
+    omitted_chunks: int = 0
 
     def __post_init__(self) -> None:
         if self.omitted_sources < 0:
             raise ValueError("omitted_sources cannot be negative")
+        if self.omitted_chunks < 0:
+            raise ValueError("omitted_chunks cannot be negative")
 
     @property
     def is_partial(self) -> bool:
-        return self.omitted_sources > 0
+        return (
+            self.omitted_sources > 0
+            or self.omitted_chunks > 0
+            or any(chunk.truncated for chunk in self.chunks)
+        )
