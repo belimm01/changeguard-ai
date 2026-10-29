@@ -3,7 +3,7 @@ from typing import Any
 import pytest
 
 from changeguard.domain.content import Revision
-from changeguard.domain.corpus import CorpusChunk
+from changeguard.domain.corpus import Corpus, CorpusChunk, CorpusSource
 
 VALID: dict[str, Any] = {
     "path": "docs/api-pagination.md",
@@ -39,3 +39,18 @@ def test_corpus_chunk_keeps_provenance() -> None:
 def test_corpus_chunk_rejects_missing_provenance(override: dict[str, Any]) -> None:
     with pytest.raises(ValueError):
         CorpusChunk(**(VALID | override))
+
+
+def test_corpus_source_rejects_missing_sha() -> None:
+    with pytest.raises(ValueError):
+        CorpusSource(path="docs/api.md", side=Revision.HEAD, sha="", text="x")
+
+
+def test_corpus_reports_partial_when_sources_were_omitted() -> None:
+    assert Corpus(chunks=()).is_partial is False
+    assert Corpus(chunks=(), omitted_sources=3).is_partial is True
+
+
+def test_corpus_rejects_negative_omitted_count() -> None:
+    with pytest.raises(ValueError):
+        Corpus(chunks=(), omitted_sources=-1)
