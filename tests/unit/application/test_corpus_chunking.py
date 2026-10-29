@@ -2,7 +2,7 @@ import pytest
 
 from changeguard.application.corpus import chunk_text
 from changeguard.domain.content import Revision
-from changeguard.domain.corpus import CorpusChunk
+from changeguard.domain.corpus import CorpusChunk, CorpusSource
 
 PATH = "docs/api.md"
 SHA = "abc123"
@@ -21,9 +21,8 @@ def chunk(start: int, end: int, text: str, truncated: bool = False) -> CorpusChu
 
 
 def split(text: str, max_bytes: int) -> tuple[CorpusChunk, ...]:
-    return chunk_text(
-        path=PATH, side=Revision.BASE, sha=SHA, text=text, max_bytes=max_bytes
-    )
+    source = CorpusSource(path=PATH, side=Revision.BASE, sha=SHA, text=text)
+    return chunk_text(source, max_bytes=max_bytes)
 
 
 def test_chunk_text_groups_whole_lines_within_byte_budget() -> None:

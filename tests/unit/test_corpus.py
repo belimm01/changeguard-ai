@@ -54,3 +54,20 @@ def test_corpus_reports_partial_when_sources_were_omitted() -> None:
 def test_corpus_rejects_negative_omitted_count() -> None:
     with pytest.raises(ValueError):
         Corpus(chunks=(), omitted_sources=-1)
+
+
+def test_corpus_chunk_from_source_copies_provenance() -> None:
+    source = CorpusSource(
+        path="docs/api.md", side=Revision.BASE, sha="abc", text="a\nb\n"
+    )
+
+    chunk = CorpusChunk.from_source(source, start_line=2, end_line=2, text="b\n")
+
+    assert chunk == CorpusChunk(
+        path="docs/api.md",
+        side=Revision.BASE,
+        sha="abc",
+        start_line=2,
+        end_line=2,
+        text="b\n",
+    )

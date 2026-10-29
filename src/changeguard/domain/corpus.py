@@ -27,6 +27,25 @@ class CorpusChunk:
         if not self.text:
             raise ValueError("text cannot be empty")
 
+    @classmethod
+    def from_source(
+        cls,
+        source: "CorpusSource",
+        start_line: int,
+        end_line: int,
+        text: str,
+        truncated: bool = False,
+    ) -> "CorpusChunk":
+        return cls(
+            path=source.path,
+            side=source.side,
+            sha=source.sha,
+            start_line=start_line,
+            end_line=end_line,
+            text=text,
+            truncated=truncated,
+        )
+
 
 @dataclass(frozen=True, slots=True)
 class CorpusSource:

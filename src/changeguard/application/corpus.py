@@ -1,18 +1,14 @@
-from changeguard.domain.content import Revision
-from changeguard.domain.corpus import CorpusChunk
+from changeguard.domain.corpus import CorpusChunk, CorpusSource
 
 MAX_CHUNK_BYTES = 8 * 1024
 _MIN_CHUNK_BYTES = 4
 
 
 def chunk_text(
-    path: str,
-    side: Revision,
-    sha: str,
-    text: str,
+    source: CorpusSource,
     max_bytes: int = MAX_CHUNK_BYTES,
 ) -> tuple[CorpusChunk, ...]:
-    """Split text into whole-line chunks of at most max_bytes UTF-8 bytes.
+    """Split source text into whole-line chunks of at most max_bytes UTF-8 bytes.
 
     A single line longer than the budget becomes its own chunk holding a
     UTF-8-safe prefix and marked truncated.
@@ -20,30 +16,25 @@ def chunk_text(
     if max_bytes < _MIN_CHUNK_BYTES:
         raise ValueError(f"max_bytes must be at least {_MIN_CHUNK_BYTES}")
 
-    def make(start: int, end: int, body: str, truncated: bool) -> CorpusChunk:
-        return CorpusChunk(
-            path=path,
-            side=side,
-            sha=sha,
-            start_line=start,
-            end_line=end,
-            text=body,
-            truncated=truncated,
-        )
-
     chunks: list[CorpusChunk] = []
     buffer: list[str] = []
     buffer_bytes = 0
     start_line = 1
 
-    for line_number, line in enumerate(_split_lines(text), start=1):
+    for line_number, line in enumerate(_split_lines(source.text), start=1):
         line_bytes = len(line.encode("utf-8"))
         if buffer and buffer_bytes + line_bytes > max_bytes:
-            chunks.append(make(start_line, line_number - 1, "".join(buffer), False))
+            chunks.append(
+                CorpusChunk.from_source(
+                    source, start_line, line_number - 1, "".join(buffer), False
+                )
+            )
             buffer, buffer_bytes = [], 0
         if line_bytes > max_bytes:
             prefix = _utf8_prefix(line, max_bytes)
-            chunks.append(make(line_number, line_number, prefix, True))
+            chunks.append(
+                CorpusChunk.from_source(source, line_number, line_number, prefix, True)
+            )
             continue
         if not buffer:
             start_line = line_number
@@ -52,7 +43,9 @@ def chunk_text(
 
     if buffer:
         chunks.append(
-            make(start_line, start_line + len(buffer) - 1, "".join(buffer), False)
+            CorpusChunk.from_source(
+                source, start_line, start_line + len(buffer) - 1, "".join(buffer), False
+            )
         )
     return tuple(chunks)
 
